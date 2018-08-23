@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Builder模式定义将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。 使用场景（1）相同的方法，不同的执行顺序，产生不同的事件结果时。（2）多个部件或零件，都可以装配到一个对象中，但是产生的运行结果又不相同时。（3）产品类非常复杂，或者产品类中的调用顺序不同产生了不同的作用，这个使用建造者模式非常适合。（4）当初始化一个对象特别复杂时，如参数多，且很多参数有默认值。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android源码设计模式 学习笔记（三） Builder模式">
+<meta property="og:url" content="http://www.yoursite.com/Android/2018/03/cjl6f9v680002soq6mh9z01iz.html">
+<meta property="og:site_name" content="愤怒的IT青年">
+<meta property="og:description" content="Builder模式定义将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。 使用场景（1）相同的方法，不同的执行顺序，产生不同的事件结果时。（2）多个部件或零件，都可以装配到一个对象中，但是产生的运行结果又不相同时。（3）产品类非常复杂，或者产品类中的调用顺序不同产生了不同的作用，这个使用建造者模式非常适合。（4）当初始化一个对象特别复杂时，如参数多，且很多参数有默认值。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://i4.piimg.com/1949/1abbd470c5802441.png">
+<meta property="og:image" content="http://i1.buimg.com/1949/fbccd3cdb3e53740.png">
+<meta property="og:updated_time" content="2018-04-08T13:03:56.399Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android源码设计模式 学习笔记（三） Builder模式">
+<meta name="twitter:description" content="Builder模式定义将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。 使用场景（1）相同的方法，不同的执行顺序，产生不同的事件结果时。（2）多个部件或零件，都可以装配到一个对象中，但是产生的运行结果又不相同时。（3）产品类非常复杂，或者产品类中的调用顺序不同产生了不同的作用，这个使用建造者模式非常适合。（4）当初始化一个对象特别复杂时，如参数多，且很多参数有默认值。">
+<meta name="twitter:image" content="http://i4.piimg.com/1949/1abbd470c5802441.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.yoursite.com/Android/2018/03/cjl6f9v680002soq6mh9z01iz.html"/>
+
+
+
+
+
+  <title>Android源码设计模式 学习笔记（三） Builder模式 | 愤怒的IT青年</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">愤怒的IT青年</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+<div class="custom-site-signature" >将来的你，一定会感谢此刻的自己…… </div>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Android/2018/03/cjl6f9v680002soq6mh9z01iz.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="liwenfeng">
+      <meta itemprop="description" content="将来的你，一定会感谢此刻的自己……">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="愤怒的IT青年">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android源码设计模式 学习笔记（三） Builder模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-04T21:22:51+08:00">
+                2018-03-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<h2 id="Builder模式"><a href="#Builder模式" class="headerlink" title="Builder模式"></a>Builder模式</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><pre><code>将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。
+</code></pre><h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>（1）相同的方法，不同的执行顺序，产生不同的事件结果时。<br>（2）多个部件或零件，都可以装配到一个对象中，但是产生的运行结果又不相同时。<br>（3）产品类非常复杂，或者产品类中的调用顺序不同产生了不同的作用，这个使用建造者模式非常适合。<br>（4）当初始化一个对象特别复杂时，如参数多，且很多参数有默认值。</p>
+<h3 id="Builder模式-的UML类图"><a href="#Builder模式-的UML类图" class="headerlink" title="Builder模式 的UML类图"></a>Builder模式 的UML类图</h3><p>UML类图如图3-1所示。<br>角色介绍:</p>
+<ul>
+<li>Product产品类—–产品的抽象类</li>
+<li>Builder—–抽象Builder类，规范产品的组建，一般由子类实现具体的组建过程</li>
+<li>ConcreteBuilder—–具体的Builder类</li>
+<li>Director—–统一组装过程</li>
+</ul>
+<p><img src="http://i4.piimg.com/1949/1abbd470c5802441.png" alt="贴图库"></p>
+<h3 id="简单实现"><a href="#简单实现" class="headerlink" title="简单实现"></a>简单实现</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">public interface Builder &#123;</span><br><span class="line"></span><br><span class="line">　　//创建部件A　　比如创建汽车车轮</span><br><span class="line">　　void buildPartA(); </span><br><span class="line">　　//创建部件B   比如创建汽车方向盘</span><br><span class="line">　　void buildPartB(); </span><br><span class="line">　　//创建部件C   比如创建汽车发动机</span><br><span class="line">　　void buildPartC();</span><br><span class="line">　　//返回最后组装成品结果 (返回最后装配好的汽车)</span><br><span class="line">　　Product getResult();</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class ConcreteBuilder implements Builder &#123;</span><br><span class="line"></span><br><span class="line">　　Part partA, partB, partC; </span><br><span class="line">　　public void buildPartA() &#123;</span><br><span class="line">　　　　//这里是具体如何构建partA的代码</span><br><span class="line">　　&#125;; </span><br><span class="line">　　public void buildPartB() &#123; </span><br><span class="line">　　　　//这里是具体如何构建partB的代码</span><br><span class="line">　　&#125;; </span><br><span class="line">　　 public void buildPartC() &#123; </span><br><span class="line">　　　　//这里是具体如何构建partB的代码</span><br><span class="line">　　&#125;; </span><br><span class="line">　　 public Product getResult() &#123; </span><br><span class="line">　　　　//返回最后组装成品结果</span><br><span class="line">　　&#125;; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//Director 类，负责制造</span><br><span class="line">public class Director &#123;</span><br><span class="line"></span><br><span class="line">　　private Builder builder;</span><br><span class="line"></span><br><span class="line">　　public Director( Builder builder ) &#123; </span><br><span class="line">　　　　this.builder = builder; </span><br><span class="line">　　&#125; </span><br><span class="line">　　// 将部件partA partB partC最后组成复杂对象</span><br><span class="line">　　//这里是将车轮 方向盘和发动机组装成汽车的过程</span><br><span class="line">　　public void construct() &#123; </span><br><span class="line">　　　　builder.buildPartA();</span><br><span class="line">　　　　builder.buildPartB();</span><br><span class="line">　　　　builder.buildPartC();</span><br><span class="line"></span><br><span class="line">　　&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public interface Product &#123; &#125;//产品</span><br><span class="line"></span><br><span class="line">public interface Part &#123; &#125;//部件</span><br><span class="line"></span><br><span class="line">//调用</span><br><span class="line">ConcreteBuilder builder = new ConcreteBuilder();</span><br><span class="line">Director director = new Director(builder); </span><br><span class="line"></span><br><span class="line">director.construct(); </span><br><span class="line">Product product = builder.getResult();</span><br></pre></td></tr></table></figure>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>通常一个类拥有多个角色，将构造函数、字段私有化，把Builder写成内部类，通过builder类的setter方法设置私有函数和方法，如此封装用户就只能通过Builder对象设置属性了。<br>简单实例如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">//customView类</span><br><span class="line">public class customView &#123;</span><br><span class="line">	//创建静态config对象</span><br><span class="line">	private int a;</span><br><span class="line">	private int b;</span><br><span class="line">	</span><br><span class="line">	//私有构造方法</span><br><span class="line">	private customView()&#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//Builder内部类</span><br><span class="line">	public static class Builder&#123;</span><br><span class="line">		int a;</span><br><span class="line">		int b;</span><br><span class="line"></span><br><span class="line">		//setter方法，设置config对象参数</span><br><span class="line">		public Builder setA(int a)&#123;</span><br><span class="line">			this.a = a;</span><br><span class="line">			return this;</span><br><span class="line">		&#125;</span><br><span class="line">		public Builder setB(int b)&#123;</span><br><span class="line">			this.b = b;</span><br><span class="line">			return this;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		void applyConfig(customView view)&#123;</span><br><span class="line">			view.a=this.a;</span><br><span class="line">			view.b=this.b;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		//返回view</span><br><span class="line">		public customView create()&#123;</span><br><span class="line">			customView view = new customView();</span><br><span class="line">			applyConfig(view);</span><br><span class="line">			return view;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;	</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>用户调用如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">customView view = new customView.Builder()</span><br><span class="line">					.setA(0)</span><br><span class="line">					.setB(0)</span><br><span class="line">					.create();</span><br></pre></td></tr></table></figure></p>
+<h3 id="Android源码中的Builder模式"><a href="#Android源码中的Builder模式" class="headerlink" title="Android源码中的Builder模式"></a>Android源码中的Builder模式</h3><h4 id="AlertDialog-Builder模式，通过Builder对象组装"><a href="#AlertDialog-Builder模式，通过Builder对象组装" class="headerlink" title="AlertDialog.Builder模式，通过Builder对象组装"></a>AlertDialog.Builder模式，通过Builder对象组装</h4><p>在开发过程中，我们经常用到AlertDialog，AlertDialog.Builder就是源码中最常用到的Builder模式，具体示例如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">private void showDialogs(Context context)&#123;</span><br><span class="line">	AlertDialog.Builder builder= new AlertDialog.Builder(context);</span><br><span class="line">	builder.setIcon(R.drawable.ic_launcher);</span><br><span class="line">	builder.setTitle(&quot;title&quot;);</span><br><span class="line">	builder.setMessage(&quot;message&quot;);</span><br><span class="line">	builder.setPositiveButton(&quot;Button&quot;, new DialogInterface.OnClickListener() &#123;</span><br><span class="line">		</span><br><span class="line">		@Override</span><br><span class="line">		public void onClick(DialogInterface dialog, int whichButton) &#123;</span><br><span class="line">			setTitle(&quot;点击了对话框上的Button&quot;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);	</span><br><span class="line">	builder.create().show();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从类名就可以看出这就是一个Builder模式，通过Builder对象组装Dialog的各个部分，如Icon、Title、Message等，将Dialog的构造和表示进行分离。相关源码如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line">//路径：frameworks/base/core/java/android/app/AlertDialog.java</span><br><span class="line"></span><br><span class="line">public class AlertDialog extends Dialog implements DialogInterface &#123;</span><br><span class="line">    //AlertController 接收Builder成员变量p中的各个参数  实现类</span><br><span class="line">    private AlertController mAlert;</span><br><span class="line">    </span><br><span class="line">    //构造函数</span><br><span class="line">    protected AlertDialog(Context context, @StyleRes int themeResId) &#123;</span><br><span class="line">        this(context, themeResId, true);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //构造AlertDialog</span><br><span class="line">    AlertDialog(Context context, @StyleRes int themeResId, boolean createContextThemeWrapper) &#123;</span><br><span class="line">        super(context, createContextThemeWrapper ? resolveDialogTheme(context, themeResId) : 0,createContextThemeWrapper);</span><br><span class="line">        mWindow.alwaysReadCloseOnTouchAttr();</span><br><span class="line">        //构造AlertController</span><br><span class="line">        mAlert = new AlertController(getContext(), this, getWindow());</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //实际上调用的是mAlert的setTitle方法</span><br><span class="line">    @Override</span><br><span class="line">    public void setTitle(CharSequence title) &#123;</span><br><span class="line">        super.setTitle(title);</span><br><span class="line">        mAlert.setTitle(title);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //实际上调用的是mAlert的setCustomTitle方法</span><br><span class="line">    public void setCustomTitle(View customTitleView) &#123;</span><br><span class="line">        mAlert的.setCustomTitle(customTitleView);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public void setMessage(CharSequence message) &#123;</span><br><span class="line">        mAlert.setMessage(message);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //省略</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">     //AlertDialog的内部类</span><br><span class="line">     public static class Builder &#123;</span><br><span class="line">        //1、储存AlertDialog的各个参数，Title、message、icon等</span><br><span class="line">        private final AlertController.AlertParams P;</span><br><span class="line">        </span><br><span class="line">        //属性省略</span><br><span class="line">        </span><br><span class="line">        public Builder(Context context) &#123;</span><br><span class="line">            this(context, resolveDialogTheme(context, 0));</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        public Builder(Context context, int themeResId) &#123;</span><br><span class="line">            P = new AlertController.AlertParams(new ContextThemeWrapper(</span><br><span class="line">                    context, resolveDialogTheme(context, themeResId)));</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        //Builder的其他代码省略</span><br><span class="line">        //2、设置各种参数</span><br><span class="line">        public Builder setTitle(CharSequence title) &#123;</span><br><span class="line">            P.mTitle = title;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        public Builder setMessage(@StringRes int messageId) &#123;</span><br><span class="line">            P.mMessage = P.mContext.getText(messageId);</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        public Builder setIcon(Drawable icon) &#123;</span><br><span class="line">            P.mIcon = icon;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        //3、构建AlertDialog，传递参数</span><br><span class="line">        public AlertDialog create() &#123;</span><br><span class="line">            // 4、new AlertDialog对象，并且将参数传递给AlertDialog实例dialog</span><br><span class="line">            // Context has already been wrapped with the appropriate theme.</span><br><span class="line">            final AlertDialog dialog = new AlertDialog(P.mContext, 0, false);</span><br><span class="line">            //5、将p中的参数应用到dialog中的mAlert对象中去</span><br><span class="line">            P.apply(dialog.mAlert);</span><br><span class="line">            dialog.setCancelable(P.mCancelable);</span><br><span class="line">            if (P.mCancelable) &#123;</span><br><span class="line">                dialog.setCanceledOnTouchOutside(true);</span><br><span class="line">            &#125;</span><br><span class="line">            dialog.setOnCancelListener(P.mOnCancelListener);</span><br><span class="line">            dialog.setOnDismissListener(P.mOnDismissListener);</span><br><span class="line">            if (P.mOnKeyListener != null) &#123;</span><br><span class="line">                dialog.setOnKeyListener(P.mOnKeyListener);</span><br><span class="line">            &#125;</span><br><span class="line">            return dialog;</span><br><span class="line">        &#125;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Builder类可以设置AlertDialog中的title、message、button等参数，这些参数都存储在类型为AlertController.AlertParams的变量p中,AlertController.AlertParams中包含了与AlertDialog识图中对应的成员变量。<br>在调用Builder类的create函数时会创建AlertDialog,并将Builder成员变量p中保存的参数应用到AlertDialog的nAlert对象中，即p.apply(dialog.mAlert)代码段。<br>apply函数实现如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">//代码：frameworks/base/core/java/com/android/internal/app/AlertController.java</span><br><span class="line">public class AlertController &#123;</span><br><span class="line">    //省略</span><br><span class="line">    public static class AlertParams &#123;</span><br><span class="line">        public void apply(AlertController dialog) &#123;</span><br><span class="line">                    if (mCustomTitleView != null) &#123;</span><br><span class="line">                        dialog.setCustomTitle(mCustomTitleView);</span><br><span class="line">                    &#125; else &#123;</span><br><span class="line">                        if (mTitle != null) &#123;</span><br><span class="line">                            dialog.setTitle(mTitle);</span><br><span class="line">                        &#125;</span><br><span class="line">                        if (mIcon != null) &#123;</span><br><span class="line">                            dialog.setIcon(mIcon);</span><br><span class="line">                        &#125;</span><br><span class="line">                        if (mIconId != 0) &#123;</span><br><span class="line">                            dialog.setIcon(mIconId);</span><br><span class="line">                        &#125;</span><br><span class="line">                        if (mIconAttrId != 0) &#123;</span><br><span class="line">                            dialog.setIcon(dialog.getIconAttributeResId(mIconAttrId));</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    if (mMessage != null) &#123;</span><br><span class="line">                        dialog.setMessage(mMessage);</span><br><span class="line">                    &#125;</span><br><span class="line">                    if (mPositiveButtonText != null) &#123;</span><br><span class="line">                        dialog.setButton(DialogInterface.BUTTON_POSITIVE, mPositiveButtonText,</span><br><span class="line">                                mPositiveButtonListener, null);</span><br><span class="line">                    &#125;</span><br><span class="line">                    if (mNegativeButtonText != null) &#123;</span><br><span class="line">                        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, mNegativeButtonText,</span><br><span class="line">                                mNegativeButtonListener, null);</span><br><span class="line">                    &#125;</span><br><span class="line">                    if (mNeutralButtonText != null) &#123;</span><br><span class="line">                        dialog.setButton(DialogInterface.BUTTON_NEUTRAL, mNeutralButtonText,</span><br><span class="line">                                mNeutralButtonListener, null);</span><br><span class="line">                    &#125;</span><br><span class="line">                    if (mForceInverseBackground) &#123;</span><br><span class="line">                        dialog.setInverseBackgroundForced(true);</span><br><span class="line">                    &#125;</span><br><span class="line">                    //如果设置了mItems，则表示是单选或多选列表，此时创建一个ListView</span><br><span class="line">                    // For a list, the client can either supply an array of items or an</span><br><span class="line">                    // adapter or a cursor</span><br><span class="line">                    if ((mItems != null) || (mCursor != null) || (mAdapter != null)) &#123;</span><br><span class="line">                        createListView(dialog);</span><br><span class="line">                    &#125;</span><br><span class="line">                    </span><br><span class="line">                    //将mView设置给Dialog</span><br><span class="line">                    if (mView != null) &#123;</span><br><span class="line">                        if (mViewSpacingSpecified) &#123;</span><br><span class="line">                            dialog.setView(mView, mViewSpacingLeft, mViewSpacingTop, mViewSpacingRight,</span><br><span class="line">                                    mViewSpacingBottom);</span><br><span class="line">                        &#125; else &#123;</span><br><span class="line">                            dialog.setView(mView);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; else if (mViewLayoutResId != 0) &#123;</span><br><span class="line">                        dialog.setView(mViewLayoutResId);</span><br><span class="line">                    &#125;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">                &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在apply函数中，只是将AlertParams参数设置到AlertController中。例如，将标题设置到Dialog对应的标题识图中，将Message设置到内容视图中等。当我们获取到AlertDialog对象后，通过show函数就可以显示这个对话框。<br>AlertDialog中相关代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">//路径：frameworks/base/core/java/android/app/AlertDialog.java</span><br><span class="line">public class AlertDialog extends Dialog implements DialogInterface &#123;</span><br><span class="line"></span><br><span class="line">    public static class Builder &#123;</span><br><span class="line">    </span><br><span class="line">          public AlertDialog create() &#123;</span><br><span class="line">                // Context has already been wrapped with the appropriate theme.</span><br><span class="line">                final AlertDialog dialog = new AlertDialog(P.mContext, 0, false);</span><br><span class="line">                //将参数设置到AlertController对象dialog中</span><br><span class="line">                P.apply(dialog.mAlert);</span><br><span class="line">                dialog.setCancelable(P.mCancelable);</span><br><span class="line">                if (P.mCancelable) &#123;</span><br><span class="line">                    dialog.setCanceledOnTouchOutside(true);</span><br><span class="line">                &#125;</span><br><span class="line">                dialog.setOnCancelListener(P.mOnCancelListener);</span><br><span class="line">                dialog.setOnDismissListener(P.mOnDismissListener);</span><br><span class="line">                if (P.mOnKeyListener != null) &#123;</span><br><span class="line">                    dialog.setOnKeyListener(P.mOnKeyListener);</span><br><span class="line">                &#125;</span><br><span class="line">                return dialog;</span><br><span class="line">            &#125;</span><br><span class="line">    </span><br><span class="line">            /**</span><br><span class="line">             * Creates an &#123;@link AlertDialog&#125; with the arguments supplied to this</span><br><span class="line">             * builder and immediately displays the dialog.</span><br><span class="line">             * &lt;p&gt;</span><br><span class="line">             * Calling this method is functionally identical to:</span><br><span class="line">             * &lt;pre&gt;</span><br><span class="line">             *     AlertDialog dialog = builder.create();</span><br><span class="line">             *     dialog.show();</span><br><span class="line">             * &lt;/pre&gt;</span><br><span class="line">             */</span><br><span class="line">             </span><br><span class="line">            </span><br><span class="line">            public AlertDialog show() &#123;</span><br><span class="line">                final AlertDialog dialog = create();</span><br><span class="line">                dialog.show();</span><br><span class="line">                return dialog;</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们再看看Dialog的show函数(该函数在Dialog类中):<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">//路径：frameworks/base/core/java/android/app/Dialog.java</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  </span><br><span class="line">    /**</span><br><span class="line">     * Start the dialog and display it on screen.  The window is placed in the</span><br><span class="line">     * application layer and opaque.  Note that you should not override this</span><br><span class="line">     * method to do initialization when the dialog is shown, instead implement</span><br><span class="line">     * that in &#123;@link #onStart&#125;.</span><br><span class="line">     */</span><br><span class="line">     //显示Dialog</span><br><span class="line">    public void show() &#123;</span><br><span class="line">        if (DBG) &#123;</span><br><span class="line">            Log.d(TAG, &quot;show&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        //已经是显示状态，则return</span><br><span class="line">        if (mShowing) &#123;</span><br><span class="line">            if (mDecor != null) &#123;</span><br><span class="line">                if (mWindow.hasFeature(Window.FEATURE_ACTION_BAR)) &#123;</span><br><span class="line">                    mWindow.invalidatePanelMenu(Window.FEATURE_ACTION_BAR);</span><br><span class="line">                &#125;</span><br><span class="line">                mDecor.setVisibility(View.VISIBLE);</span><br><span class="line">            &#125;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        mCanceled = false;</span><br><span class="line">        //1、onCreate调用</span><br><span class="line">        if (!mCreated) &#123;</span><br><span class="line">            dispatchOnCreate(null);</span><br><span class="line">        &#125;</span><br><span class="line">        //2、onStart</span><br><span class="line">        onStart();</span><br><span class="line">        //3、获取DecorView</span><br><span class="line">        mDecor = mWindow.getDecorView();</span><br><span class="line">      </span><br><span class="line">        //省略  </span><br><span class="line">        //4、获取布局参数</span><br><span class="line">        WindowManager.LayoutParams l = mWindow.getAttributes();</span><br><span class="line">        if ((l.softInputMode</span><br><span class="line">                &amp; WindowManager.LayoutParams.SOFT_INPUT_IS_FORWARD_NAVIGATION) == 0) &#123;</span><br><span class="line">            WindowManager.LayoutParams nl = new WindowManager.LayoutParams();</span><br><span class="line">            nl.copyFrom(l);</span><br><span class="line">            nl.softInputMode |=</span><br><span class="line">                    WindowManager.LayoutParams.SOFT_INPUT_IS_FORWARD_NAVIGATION;</span><br><span class="line">            l = nl;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        try &#123;  </span><br><span class="line">            //5、将mDecor添加到mWindowManager中</span><br><span class="line">            mWindowManager.addView(mDecor添加到, l);</span><br><span class="line">            mShowing = true;</span><br><span class="line">            //发送一个显示Dialog的消息</span><br><span class="line">            sendShowMessage();</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>在show函数中主要做了如下几个事情:</p>
+<ul>
+<li>(1)通过dispatchOnCreate函数来调用AlertDialog中的onCreate函数:</li>
+<li>(2)调用AlertDialog的onStart函数</li>
+<li>最后将Dialog的DecorView添加到WindowManager中</li>
+</ul>
+<p>很明显，这就是一系列的典型的生命周期函数。按照惯例，AlertDialog的内容视图构建按理应该在onCreate函数中，我们来看看是不是:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">//路径：frameworks/base/core/java/android/app/AlertDialog.java</span><br><span class="line"></span><br><span class="line">public class AlertDialog extends Dialog implements DialogInterface &#123;</span><br><span class="line"></span><br><span class="line">   @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        //调用了AlertController的installContent方法</span><br><span class="line">        mAlert.installContent();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在onCreate函数中主要调用了AlertController的installContent方法，Dialog中的onCreate函数只是一个空实现而已，可以忽略他。那么AlertDialog的内容视图必然就在installContent函数中。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">//路径：frameworks/base/core/java/com/android/internal/app/AlertController.java</span><br><span class="line"></span><br><span class="line">public class AlertController &#123;</span><br><span class="line"></span><br><span class="line">    public void installContent() &#123;</span><br><span class="line">        /* We use a custom title so never request a window title */</span><br><span class="line">        mWindow.requestFeature(Window.FEATURE_NO_TITLE);</span><br><span class="line">        int contentView = selectContentView();</span><br><span class="line">        mWindow.setContentView(contentView);</span><br><span class="line">        setupView();</span><br><span class="line">        setupDecor();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private int selectContentView() &#123;</span><br><span class="line">        if (mButtonPanelSideLayout == 0) &#123;</span><br><span class="line">            return mAlertDialogLayout;</span><br><span class="line">        &#125;</span><br><span class="line">        if (mButtonPanelLayoutHint == AlertDialog.LAYOUT_HINT_SIDE) &#123;</span><br><span class="line">            return mButtonPanelSideLayout;</span><br><span class="line">        &#125;</span><br><span class="line">        // TODO: use layout hint side for long messages/lists</span><br><span class="line">        return mAlertDialogLayout;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>installContent函数的代码，但极为重要，它调用了Window对象的setContentView，这个setContentView就与Activity中的一模一样，实际上Activity最终也是调用Window对象的setContentView函数。因此，这里就是设置AlertDialog的内容布局，这个布局就是mAlertDialogLayout的值。这个值在AlertController的构造函数中进行了初始化，具体代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">//路径：frameworks/base/core/java/com/android/internal/app/AlertController.java</span><br><span class="line"></span><br><span class="line">public class AlertController &#123;</span><br><span class="line"></span><br><span class="line">public AlertController(Context context, DialogInterface di, Window window) &#123;</span><br><span class="line">        mContext = context;</span><br><span class="line">        mDialogInterface = di;</span><br><span class="line">        mWindow = window;</span><br><span class="line">        mHandler = new ButtonHandler(di);</span><br><span class="line"></span><br><span class="line">        final TypedArray a = context.obtainStyledAttributes(null,</span><br><span class="line">                R.styleable.AlertDialog, R.attr.alertDialogStyle, 0);</span><br><span class="line">        //AlertController的布局id，也就是alert_dialog.xml布局</span><br><span class="line">        mAlertDialogLayout = a.getResourceId(</span><br><span class="line">                R.styleable.AlertDialog_layout, R.layout.alert_dialog);</span><br><span class="line">        mButtonPanelSideLayout = a.getResourceId(</span><br><span class="line">                R.styleable.AlertDialog_buttonPanelSideLayout, 0);</span><br><span class="line">        mListLayout = a.getResourceId(</span><br><span class="line">                R.styleable.AlertDialog_listLayout, R.layout.select_dialog);</span><br><span class="line">        //省略</span><br><span class="line">        a.recycle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从AlertController的构造函数中可以看到，AlertDialog的布局资源就是select_dialog.xml这个布局，我们直接大致看他的结构如下:<br><img src="http://i1.buimg.com/1949/fbccd3cdb3e53740.png" alt="贴图库"><br>当通过Builder对象的setTitle、setMessage等方法设置具体内容时，就是将这些内容填充到对应的视图中。而AlertDialog也允许你通过setView传入内容视图，这个内容视图就是替换掉图中的内容视图(蓝色区域)，AlertDialog预留了一个costomPanel区域用来显示用户自定义的内容视图。我们来看看setupView函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line">public class AlertController &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    private void setupView() &#123;</span><br><span class="line">         </span><br><span class="line">        final View parentPanel = mWindow.findViewById(R.id.parentPanel);</span><br><span class="line">        final View defaultTopPanel = parentPanel.findViewById(R.id.topPanel);</span><br><span class="line">        //1、获取内容区域</span><br><span class="line">        final View defaultContentPanel = parentPanel.findViewById(R.id.contentPanel);</span><br><span class="line">        //1、获取按钮</span><br><span class="line">        final View defaultButtonPanel = parentPanel.findViewById(R.id.buttonPanel);</span><br><span class="line"></span><br><span class="line">        // Install custom content before setting up the title or buttons so</span><br><span class="line">        // that we can handle panel overrides.</span><br><span class="line">        final ViewGroup customPanel = (ViewGroup) parentPanel.findViewById(R.id.customPanel);</span><br><span class="line">        //自定义内容视图区域</span><br><span class="line">        setupCustomContent(customPanel);</span><br><span class="line"></span><br><span class="line">        final View customTopPanel = customPanel.findViewById(R.id.topPanel);</span><br><span class="line">        final View customContentPanel = customPanel.findViewById(R.id.contentPanel);</span><br><span class="line">        final View customButtonPanel = customPanel.findViewById(R.id.buttonPanel);</span><br><span class="line"></span><br><span class="line">        // Resolve the correct panels and remove the defaults, if needed.</span><br><span class="line">        final ViewGroup topPanel = resolvePanel(customTopPanel, defaultTopPanel);</span><br><span class="line">        final ViewGroup contentPanel = resolvePanel(customContentPanel, defaultContentPanel);</span><br><span class="line">        final ViewGroup buttonPanel = resolvePanel(customButtonPanel, defaultButtonPanel);</span><br><span class="line">        //2、初始化内容</span><br><span class="line">        setupContent(contentPanel);</span><br><span class="line">        setupButtons(buttonPanel);</span><br><span class="line">        //2、初始化标题</span><br><span class="line">        setupTitle(topPanel);</span><br><span class="line">        </span><br><span class="line">        //自定义视图可见性</span><br><span class="line">        final boolean hasCustomPanel = customPanel != null</span><br><span class="line">                &amp;&amp; customPanel.getVisibility() != View.GONE;</span><br><span class="line">        final boolean hasTopPanel = topPanel != null</span><br><span class="line">                &amp;&amp; topPanel.getVisibility() != View.GONE;</span><br><span class="line">        final boolean hasButtonPanel = buttonPanel != null</span><br><span class="line">                &amp;&amp; buttonPanel.getVisibility() != View.GONE;</span><br><span class="line"></span><br><span class="line">        // Only display the text spacer if we don&apos;t have buttons.</span><br><span class="line">        if (!hasButtonPanel) &#123;</span><br><span class="line">            if (contentPanel != null) &#123;</span><br><span class="line">                final View spacer = contentPanel.findViewById(R.id.textSpacerNoButtons);</span><br><span class="line">                if (spacer != null) &#123;</span><br><span class="line">                    spacer.setVisibility(View.VISIBLE);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            mWindow.setCloseOnTouchOutsideIfNotSet(true);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (hasTopPanel) &#123;</span><br><span class="line">            // Only clip scrolling content to padding if we have a title.</span><br><span class="line">            if (mScrollView != null) &#123;</span><br><span class="line">                mScrollView.setClipToPadding(true);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            // Only show the divider if we have a title.</span><br><span class="line">            final View divider;</span><br><span class="line">            if (mMessage != null || mListView != null || hasCustomPanel) &#123;</span><br><span class="line">                divider = topPanel.findViewById(R.id.titleDivider);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                divider = topPanel.findViewById(R.id.titleDividerTop);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if (divider != null) &#123;</span><br><span class="line">                divider.setVisibility(View.VISIBLE);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // Update scroll indicators as needed.</span><br><span class="line">        if (!hasCustomPanel) &#123;</span><br><span class="line">            final View content = mListView != null ? mListView : mScrollView;</span><br><span class="line">            if (content != null) &#123;</span><br><span class="line">                final int indicators = (hasTopPanel ? View.SCROLL_INDICATOR_TOP : 0)</span><br><span class="line">                        | (hasButtonPanel ? View.SCROLL_INDICATOR_BOTTOM : 0);</span><br><span class="line">                content.setScrollIndicators(indicators,</span><br><span class="line">                        View.SCROLL_INDICATOR_TOP | View.SCROLL_INDICATOR_BOTTOM);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        final TypedArray a = mContext.obtainStyledAttributes(</span><br><span class="line">                null, R.styleable.AlertDialog, R.attr.alertDialogStyle, 0);</span><br><span class="line">        //设置背景</span><br><span class="line">        setBackground(a, topPanel, contentPanel, customPanel, buttonPanel,</span><br><span class="line">                hasTopPanel, hasCustomPanel, hasButtonPanel);</span><br><span class="line">        a.recycle();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    //自定义内容视图区域</span><br><span class="line">    private void setupCustomContent(ViewGroup customPanel) &#123;</span><br><span class="line">        final View customView;</span><br><span class="line">        //如果用户设置了内容视图，那么将它显示在customPanel的custom布局里面</span><br><span class="line">        if (mView != null) &#123;</span><br><span class="line">            customView = mView;</span><br><span class="line">        &#125; else if (mViewLayoutResId != 0) &#123;</span><br><span class="line">            final LayoutInflater inflater = LayoutInflater.from(mContext);</span><br><span class="line">            customView = inflater.inflate(mViewLayoutResId, customPanel, false);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            customView = null;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        final boolean hasCustomView = customView != null;</span><br><span class="line">        if (!hasCustomView || !canTextInput(customView)) &#123;</span><br><span class="line">            mWindow.setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,</span><br><span class="line">                    WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (hasCustomView) &#123;</span><br><span class="line">            final FrameLayout custom = (FrameLayout) mWindow.findViewById(R.id.custom);</span><br><span class="line">            //显示用户设置的视图</span><br><span class="line">            custom.addView(customView, new LayoutParams(MATCH_PARENT, MATCH_PARENT));</span><br><span class="line"></span><br><span class="line">            if (mViewSpacingSpecified) &#123;</span><br><span class="line">                custom.setPadding(</span><br><span class="line">                        mViewSpacingLeft, mViewSpacingTop, mViewSpacingRight, mViewSpacingBottom);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if (mListView != null) &#123;</span><br><span class="line">                ((LinearLayout.LayoutParams) customPanel.getLayoutParams()).weight = 0;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            customPanel.setVisibility(View.GONE);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个setupView顾名思义就是初始化AlertDialog布局中的各个部分，如标题区域、按钮区域、内容区域等，在该函数调用之后整个Dialog的视图内容全部设置完毕。而这些各区域的视图都属于mAlertDialogLayout布局中的子元素，Window对象又关联了mAlertDialogLayout的整个布局树，当调用完setupView之后整个视图树的数据都填充完毕。当用户调用了show函数时，WindosManager会将Window对象的DecorView(也就是mAlertDialogLayout对应的视图)，添加到用户的窗口上，并且显示出来。至此，整个Dialog就会出现在用户的视野中了。</p>
+<hr>
+<ul>
+<li>AlertDialog</li>
+<li><ul>
+<li>Builder内部类</li>
+</ul>
+</li>
+<li><ul>
+<li>onCreate()方法调用AlertController类installContent()方法设置内容布局</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>AlertDialog.Builder—Builder、ConcreteBuilder、Dirctor角色</li>
+<li><ul>
+<li>初始化AlertController.AlertParams对象p储存数据(Title、message、icon等)</li>
+</ul>
+</li>
+<li><ul>
+<li>set方法将数据储存至AlertController.AlertParams对象p</li>
+</ul>
+</li>
+<li><ul>
+<li>create()方法储存将AlertController.AlertParams对象p数据应用至AlertController对象dialog.mAlert</li>
+</ul>
+</li>
+<li><ul>
+<li>show()方法调用AlertDialog父类Dialog的show()方法加载布局。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>AlertController</li>
+<li><ul>
+<li>AlertParams内部类</li>
+</ul>
+</li>
+<li><ul>
+<li>接收数据(Title、message、icon等)</li>
+</ul>
+</li>
+<li><ul>
+<li>installContent()方法调用Window对象的setContentView函数设置AlertDialog的内容布局,并调用setupView()方法初始化布局</li>
+</ul>
+</li>
+<li><ul>
+<li>setupView()初始化布局</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>AlertController.AlertParams</li>
+<li><ul>
+<li>用于储存数据(Title、message、icon等)</li>
+</ul>
+</li>
+<li><ul>
+<li>apply()方法将数据传递给AlertDialog类实例化的AlertController对象</li>
+</ul>
+</li>
+</ul>
+<p>在AlertDialog的Builder模式中并没有看到Director角色的出现(其实在很多场景中，Android并没有按照《设计模式:可复用面向对象软件的基础》一书中描述的经典模式来实现，而是做了些修改，使得更易于使用)。这里的AlertDialog.Builder同时扮演了builder、ConcreteBuilder、Dirctor的角色，简化了Builder模式的设计。</p>
+<hr>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Android/2018/03/cjl6f9v6e0008soq6v7u2b8iz.html" rel="next" title="Android源码设计模式 学习笔记（二） 单例模式">
+                <i class="fa fa-chevron-left"></i> Android源码设计模式 学习笔记（二） 单例模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Android/2018/03/cjl6f9v6d0007soq6wd3fnrm7.html" rel="prev" title="Android源码设计模式 学习笔记（四） 原型模式">
+                Android源码设计模式 学习笔记（四） 原型模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="liwenfeng" />
+            
+              <p class="site-author-name" itemprop="name">liwenfeng</p>
+			  <!--liwenfeng:change 2018.03.18 begin-->
+              <p class="site-description motion-element" itemprop="description"></p>
+			  <p class="site-description motion-element" itemprop="description">人若有才，清风自来</p>
+			  <!--liwenfeng:change 2018.03.18 end-->
+			  <p class="site-description motion-element" itemprop="description"></p>
+
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Builder模式"><span class="nav-number">1.</span> <span class="nav-text">Builder模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义"><span class="nav-number">1.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用场景"><span class="nav-number">1.2.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Builder模式-的UML类图"><span class="nav-number">1.3.</span> <span class="nav-text">Builder模式 的UML类图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简单实现"><span class="nav-number">1.4.</span> <span class="nav-text">简单实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Android源码中的Builder模式"><span class="nav-number">1.6.</span> <span class="nav-text">Android源码中的Builder模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AlertDialog-Builder模式，通过Builder对象组装"><span class="nav-number">1.6.1.</span> <span class="nav-text">AlertDialog.Builder模式，通过Builder对象组装</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" align="center">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">liwenfeng</span>
+
+  
+</div>
+
+
+
+<div align="center">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数：<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+  <div class="powered-by">个人专属</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">博客 &mdash; <a class="theme-link" target="_blank" href="../">leewf</a></div>
+
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
