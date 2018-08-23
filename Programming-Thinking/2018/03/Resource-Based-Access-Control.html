@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Thinking," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文讨论以角色概念进行的权限管理策略及主要以基于角色的机制进行权限管理是远远不够的。 同时讨论一种我认为更好的权限管理方式 什么是角色角色：一系列可执行的操作或责任的实体(用于限定你在软件系统中能做什么、不能做什么。用户帐号往往与角色相关联) 例如，一个用户以关联了”项目管理员”角色的帐号登录系统，那这个用户就可以做项目管理员能做的所有事情 从这个意义上来说，角色更多的是一种行为的概念：它表示用户">
+<meta name="keywords" content="Thinking">
+<meta property="og:type" content="article">
+<meta property="og:title" content="编程思想：角色权限管理策略(RBAC 新解)">
+<meta property="og:url" content="http://www.yoursite.com/Programming-Thinking/2018/03/Resource-Based-Access-Control.html">
+<meta property="og:site_name" content="愤怒的IT青年">
+<meta property="og:description" content="本文讨论以角色概念进行的权限管理策略及主要以基于角色的机制进行权限管理是远远不够的。 同时讨论一种我认为更好的权限管理方式 什么是角色角色：一系列可执行的操作或责任的实体(用于限定你在软件系统中能做什么、不能做什么。用户帐号往往与角色相关联) 例如，一个用户以关联了”项目管理员”角色的帐号登录系统，那这个用户就可以做项目管理员能做的所有事情 从这个意义上来说，角色更多的是一种行为的概念：它表示用户">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-03-19T10:41:55.950Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="编程思想：角色权限管理策略(RBAC 新解)">
+<meta name="twitter:description" content="本文讨论以角色概念进行的权限管理策略及主要以基于角色的机制进行权限管理是远远不够的。 同时讨论一种我认为更好的权限管理方式 什么是角色角色：一系列可执行的操作或责任的实体(用于限定你在软件系统中能做什么、不能做什么。用户帐号往往与角色相关联) 例如，一个用户以关联了”项目管理员”角色的帐号登录系统，那这个用户就可以做项目管理员能做的所有事情 从这个意义上来说，角色更多的是一种行为的概念：它表示用户">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.yoursite.com/Programming-Thinking/2018/03/Resource-Based-Access-Control.html"/>
+
+
+
+
+
+  <title>编程思想：角色权限管理策略(RBAC 新解) | 愤怒的IT青年</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">愤怒的IT青年</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+<div class="custom-site-signature" >将来的你，一定会感谢此刻的自己…… </div>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Programming-Thinking/2018/03/Resource-Based-Access-Control.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="liwenfeng">
+      <meta itemprop="description" content="将来的你，一定会感谢此刻的自己……">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="愤怒的IT青年">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">编程思想：角色权限管理策略(RBAC 新解)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-17T22:11:31+08:00">
+                2018-03-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Programming-Thinking/" itemprop="url" rel="index">
+                    <span itemprop="name">Programming Thinking</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <pre><code>本文讨论以角色概念进行的权限管理策略及主要以基于角色的机制进行权限管理是远远不够的。
+同时讨论一种我认为更好的权限管理方式
+</code></pre><h2 id="什么是角色"><a href="#什么是角色" class="headerlink" title="什么是角色"></a>什么是角色</h2><pre><code>角色：一系列可执行的操作或责任的实体(用于限定你在软件系统中能做什么、不能做什么。用户帐号往往与角色相关联)
+</code></pre><p>例如，一个用户以关联了”项目管理员”角色的帐号登录系统，那这个用户就可以做项目管理员能做的所有事情</p>
+<p>从这个意义上来说，角色更多的是一种行为的概念：它表示用户能在系统中进行的操作</p>
+<h2 id="基于角色的访问控制（Role-Based-Access-Control）"><a href="#基于角色的访问控制（Role-Based-Access-Control）" class="headerlink" title="基于角色的访问控制（Role-Based Access Control）"></a>基于角色的访问控制（Role-Based Access Control）</h2><pre><code>基于角色的访问控制(Role-Based Access Control)：在软件开发中使用角色来控制对软件功能和数据的访问，简称RBAC
+</code></pre><p>有两种正使用的RBAC控制方式：<code>隐式(模糊)的方式</code>和<code>显示(明确)的方式</code></p>
+<h3 id="隐式的访问控制"><a href="#隐式的访问控制" class="headerlink" title="隐式的访问控制"></a>隐式的访问控制</h3><pre><code>不能明确的知道一个角色到底关联了哪些可执行操作，直接通过角色来验证用户有没有操作权限
+</code></pre><p>例如：“项目管理员”角色能查看项目报表<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 通过验证用户角色来判断操作权限</span></span><br><span class="line"><span class="keyword">if</span> (user.hasRole(<span class="string">"Project Manager"</span>) ) &#123;</span><br><span class="line">    <span class="comment">//show project reports</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//don't show project reports</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面代码通过判断用户是否有”项目管理员”角色来决定是否显示查看项目报表，并没有明确语句来定义”项目管理员”这一角色到底包含哪些可执行的行为</p>
+<h4 id="脆弱的权限策略"><a href="#脆弱的权限策略" class="headerlink" title="脆弱的权限策略"></a>脆弱的权限策略</h4><pre><code>上面这种权限访问控制是非常脆弱的，一个极小的权限方面的需求变动都可能导致上面的代码需要重新修改
+</code></pre><p>假如：需要新增“部门管理员”角色，也能查看项目报表<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">if</span> (user.hasRole(<span class="string">"Project Manager"</span>) || user.hasRole(<span class="string">"Department Manager"</span>) ) &#123;</span><br><span class="line">    <span class="comment">//show project reports</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//don't show project reports</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>任何微小的权限需求的变动都可能需要修改软件功能和数据访问的代码</p>
+<h3 id="显示的访问控制-更好的选择"><a href="#显示的访问控制-更好的选择" class="headerlink" title="显示的访问控制(更好的选择)"></a>显示的访问控制(更好的选择)</h3><pre><code>明确定义一个角色能对哪些资源进行什么操作
+</code></pre><p>例如：如果当前用户允许查看编号为12345的项目报表，则显示项目报表按钮(不要太在意冒号分隔的语法，这仅是一个例子)<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//通过验证操作权限判断角色能否操作</span></span><br><span class="line"><span class="keyword">if</span> (user.isPermitted(<span class="string">"projectReport:view:12345"</span>)) &#123;</span><br><span class="line">    <span class="comment">//show the project report button</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//don't show the button</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="显式的权限控制方式的好处"><a href="#显式的权限控制方式的好处" class="headerlink" title="显式的权限控制方式的好处"></a>显式的权限控制方式的好处</h4><ul>
+<li>更少的代码重构<ul>
+<li>系统的功能需求一旦确定下来后，一段时间内对它的改动相应还是比较少的。</li>
+<li>显式的权限控制方式不会因不同的角色要对功能进行操作而修改功能代码</li>
+</ul>
+</li>
+<li>更直观<ul>
+<li>保护资源对象、控制对资源对象的操作。</li>
+<li>这样的权限控制方式更符合人们的思想习惯。</li>
+</ul>
+</li>
+<li>更有弹性<ul>
+<li>可支持任何安全模型的设计</li>
+<li>例如：将操作(权限)直接分配给角色，或者将多个角色关联到组(group)上</li>
+</ul>
+</li>
+<li>外部安全策略管理<ul>
+<li>资源/行为与用户、组、角色的关联可以通过外部的模块或专用工具或管理控制台来完成</li>
+</ul>
+</li>
+<li>可在运行环境做修改<ul>
+<li>因为基于资源的权限控制代码并不依赖于行为的主体(如组、角色、用户等)（没有将行为的主体的字符名词写在代码中），所以你甚至可以在程序运行的时候通过修改主体能对资源进行的操作，通过配置的方式就可应对权限方面需求的变动，不需要重构代码</li>
+</ul>
+</li>
+</ul>
+<h2 id="RBAC新解：Resource-Based-Access-Control"><a href="#RBAC新解：Resource-Based-Access-Control" class="headerlink" title="RBAC新解：Resource-Based Access Control"></a>RBAC新解：Resource-Based Access Control</h2><pre><code>这种显式的机制带给我们的富有弹性的权限模型。在这种新的模型下，已不必再局限于角色了，
+你可以将权限直接分配给用户、组或其它对象
+</code></pre><p>因为显式地、基于资源的权限访问控制的诸多好处，或许可以给RBAC一个新的定义：“Resource-Based Access Control”。</p>
+<h3 id="基于资源的权限访问控制举例：-Apache-Shiro"><a href="#基于资源的权限访问控制举例：-Apache-Shiro" class="headerlink" title="基于资源的权限访问控制举例： Apache Shiro"></a>基于资源的权限访问控制举例： Apache Shiro</h3><pre><code>Apache Shiro：一个java平台的现代权限管理框架，Shiro很好地支持基于资源的权限访问控制。
+</code></pre><p><a href="http://globeeip.iteye.com/blog/1236167" target="_blank" rel="noopener">原文链接</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Thinking/" rel="tag"><i class="fa fa-tag"></i> Thinking</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Interview/2018/03/cjl6dv1mq0018gcq6dpk81b96.html" rel="next" title="面试--java后端 2018.03.15">
+                <i class="fa fa-chevron-left"></i> 面试--java后端 2018.03.15
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Redis/2018/03/cjl6dv1mn000zgcq67ric9g5c.html" rel="prev" title="Windows Redis服务">
+                Windows Redis服务 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="liwenfeng" />
+            
+              <p class="site-author-name" itemprop="name">liwenfeng</p>
+			  <!--liwenfeng:change 2018.03.18 begin-->
+              <p class="site-description motion-element" itemprop="description"></p>
+			  <p class="site-description motion-element" itemprop="description">人若有才，清风自来</p>
+			  <!--liwenfeng:change 2018.03.18 end-->
+			  <p class="site-description motion-element" itemprop="description"></p>
+
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是角色"><span class="nav-number">1.</span> <span class="nav-text">什么是角色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于角色的访问控制（Role-Based-Access-Control）"><span class="nav-number">2.</span> <span class="nav-text">基于角色的访问控制（Role-Based Access Control）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#隐式的访问控制"><span class="nav-number">2.1.</span> <span class="nav-text">隐式的访问控制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#脆弱的权限策略"><span class="nav-number">2.1.1.</span> <span class="nav-text">脆弱的权限策略</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显示的访问控制-更好的选择"><span class="nav-number">2.2.</span> <span class="nav-text">显示的访问控制(更好的选择)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#显式的权限控制方式的好处"><span class="nav-number">2.2.1.</span> <span class="nav-text">显式的权限控制方式的好处</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RBAC新解：Resource-Based-Access-Control"><span class="nav-number">3.</span> <span class="nav-text">RBAC新解：Resource-Based Access Control</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于资源的权限访问控制举例：-Apache-Shiro"><span class="nav-number">3.1.</span> <span class="nav-text">基于资源的权限访问控制举例： Apache Shiro</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" align="center">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">liwenfeng</span>
+
+  
+</div>
+
+
+
+<div align="center">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数：<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+  <div class="powered-by">个人专属</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">博客 &mdash; <a class="theme-link" target="_blank" href="../">leewf</a></div>
+
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="官方文档 Java集合图解Java集合框架的UML类图  Java集合框架-思维导图  各集合类型对比   集合类型 结构 排列顺序 线程安全 能否包含Null 其他特点     List  有序      LinkedList 双向链表 有序  能 插入快、查询慢   ArrayList 数组结构 有序 不安全 能 插入慢、查询快   Vector 数组结构 有序 线程安全 能 插入慢、查询慢">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 集合知识整合">
+<meta property="og:url" content="http://www.yoursite.com/Java/2018/03/java-collection-summary.html">
+<meta property="og:site_name" content="愤怒的IT青年">
+<meta property="og:description" content="官方文档 Java集合图解Java集合框架的UML类图  Java集合框架-思维导图  各集合类型对比   集合类型 结构 排列顺序 线程安全 能否包含Null 其他特点     List  有序      LinkedList 双向链表 有序  能 插入快、查询慢   ArrayList 数组结构 有序 不安全 能 插入慢、查询快   Vector 数组结构 有序 线程安全 能 插入慢、查询慢">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.yoursite.com/Java/2018/03/java-collection-summary/Java-集合框架的UML类图.jpg">
+<meta property="og:image" content="http://www.yoursite.com/Java/2018/03/java-collection-summary/Java-集合框架-思维导图.jpg">
+<meta property="og:updated_time" content="2018-03-21T13:39:08.806Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java 集合知识整合">
+<meta name="twitter:description" content="官方文档 Java集合图解Java集合框架的UML类图  Java集合框架-思维导图  各集合类型对比   集合类型 结构 排列顺序 线程安全 能否包含Null 其他特点     List  有序      LinkedList 双向链表 有序  能 插入快、查询慢   ArrayList 数组结构 有序 不安全 能 插入慢、查询快   Vector 数组结构 有序 线程安全 能 插入慢、查询慢">
+<meta name="twitter:image" content="http://www.yoursite.com/Java/2018/03/java-collection-summary/Java-集合框架的UML类图.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.yoursite.com/Java/2018/03/java-collection-summary.html"/>
+
+
+
+
+
+  <title>Java 集合知识整合 | 愤怒的IT青年</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">愤怒的IT青年</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+<div class="custom-site-signature" >将来的你，一定会感谢此刻的自己…… </div>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Java/2018/03/java-collection-summary.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="liwenfeng">
+      <meta itemprop="description" content="将来的你，一定会感谢此刻的自己……">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="愤怒的IT青年">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java 集合知识整合</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-19T10:12:58+08:00">
+                2018-03-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><a href="https://docs.oracle.com/javase/7/docs/api/java/util/Collection.html" target="_blank" rel="noopener">官方文档</a></p>
+<h2 id="Java集合图解"><a href="#Java集合图解" class="headerlink" title="Java集合图解"></a>Java集合图解</h2><h3 id="Java集合框架的UML类图"><a href="#Java集合框架的UML类图" class="headerlink" title="Java集合框架的UML类图"></a>Java集合框架的UML类图</h3><!--![Java-集合框架的UML类图](/Java-集合知识整合/Java-集合框架的UML类图.jpg)-->
+<img src="/Java/2018/03/java-collection-summary/Java-集合框架的UML类图.jpg">
+<h3 id="Java集合框架-思维导图"><a href="#Java集合框架-思维导图" class="headerlink" title="Java集合框架-思维导图"></a>Java集合框架-思维导图</h3><!-- ![Java-集合框架的UML类图](/Java-集合知识整合/Java-集合框架-思维导图.jpg)-->
+<img src="/Java/2018/03/java-collection-summary/Java-集合框架-思维导图.jpg">
+<h3 id="各集合类型对比"><a href="#各集合类型对比" class="headerlink" title="各集合类型对比"></a>各集合类型对比</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">集合类型</th>
+<th style="text-align:center">结构</th>
+<th style="text-align:center">排列顺序</th>
+<th style="text-align:center">线程安全</th>
+<th style="text-align:center">能否包含Null</th>
+<th style="text-align:center">其他特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">List</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">有序</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">LinkedList</td>
+<td style="text-align:center">双向链表</td>
+<td style="text-align:center">有序</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">能</td>
+<td style="text-align:center">插入快、查询慢</td>
+</tr>
+<tr>
+<td style="text-align:center">ArrayList</td>
+<td style="text-align:center">数组结构</td>
+<td style="text-align:center">有序</td>
+<td style="text-align:center">不安全</td>
+<td style="text-align:center">能</td>
+<td style="text-align:center">插入慢、查询快</td>
+</tr>
+<tr>
+<td style="text-align:center">Vector</td>
+<td style="text-align:center">数组结构</td>
+<td style="text-align:center">有序</td>
+<td style="text-align:center">线程安全</td>
+<td style="text-align:center">能</td>
+<td style="text-align:center">插入慢、查询慢</td>
+</tr>
+<tr>
+<td style="text-align:center">Set</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">元素唯一</td>
+</tr>
+<tr>
+<td style="text-align:center">HashSet</td>
+<td style="text-align:center">哈希表</td>
+<td style="text-align:center">无序</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">能有一个Null值</td>
+<td style="text-align:center">元素唯一</td>
+</tr>
+<tr>
+<td style="text-align:center">TreeSet</td>
+<td style="text-align:center">二叉树</td>
+<td style="text-align:center">有序</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">不能有Null值</td>
+<td style="text-align:center">元素唯一</td>
+</tr>
+<tr>
+<td style="text-align:center">Map</td>
+<td style="text-align:center">&lt;Key,Value&gt;</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Key唯一</td>
+</tr>
+<tr>
+<td style="text-align:center">HashMap</td>
+<td style="text-align:center">哈希表</td>
+<td style="text-align:center">无序</td>
+<td style="text-align:center">不安全</td>
+<td style="text-align:center">Key只能一个Null，Value能为Null</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">HashTable</td>
+<td style="text-align:center">哈希表</td>
+<td style="text-align:center">无序</td>
+<td style="text-align:center">线程安全</td>
+<td style="text-align:center">Key只能一个Null，Value能为Null</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">TreeMap</td>
+<td style="text-align:center">树状结构</td>
+<td style="text-align:center">有序</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Key不能为Null，Value能为Null</td>
+<td style="text-align:center">-</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Collection接口"><a href="#Collection接口" class="headerlink" title="Collection接口"></a>Collection接口</h2><p>Collection接口是最基本的容器接口</p>
+<p><strong>父接口：</strong>Iterable<e></e></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Collection</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">Iterable</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>主要接口及实现类</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Collection</span><br><span class="line">    ├ List</span><br><span class="line">    │ ├ LinkedList</span><br><span class="line">    │ ├ ArrayList</span><br><span class="line">    │ └ Vector</span><br><span class="line">    │　  └ Stack</span><br><span class="line">    └ Set</span><br><span class="line">      ├ HashSet</span><br><span class="line">      └ TreeSet</span><br></pre></td></tr></table></figure>
+<h3 id="List接口"><a href="#List接口" class="headerlink" title="List接口"></a>List接口</h3><p><strong>所有父接口：</strong>Collection<e>, Iterable<e></e></e></p>
+<p><strong>特点：</strong><br>元素是有序的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">Collection</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="LinkedList"><a href="#LinkedList" class="headerlink" title="LinkedList"></a>LinkedList</h4><p><strong>所有父接口：</strong>Serializable, Cloneable, Iterable<e>, Collection<e>, Deque<e>, List<e>, Queue<e></e></e></e></e></e></p>
+<p><strong>特点：</strong><br>双向链表结构，更便于修改数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LinkedList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AbstractSequentialList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt;, <span class="title">Deque</span>&lt;<span class="title">E</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h4><p><strong>所有父接口：</strong>Serializable, Cloneable, Iterable<e>, Collection<e>, List<e>, RandomAccess</e></e></e></p>
+<p><strong>特点：</strong><br>数组结构，更便于查询炒作<br>线程不同步</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayList</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt;, <span class="title">RandomAccess</span>, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Vector"><a href="#Vector" class="headerlink" title="Vector"></a>Vector</h4><p><strong>所有父接口：</strong>Serializable, Cloneable, Iterable<e>, Collection<e>, List<e>, RandomAccess</e></e></e></p>
+<p><strong>特点：</strong><br>数组结构<br>线程同步，查询与修改都缓慢</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Vector</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AbstractList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt;, <span class="title">RandomAccess</span>, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Set接口"><a href="#Set接口" class="headerlink" title="Set接口"></a>Set接口</h3><p><strong>所有父接口：</strong>Collection<e>, Iterable<e></e></e></p>
+<p><strong>特点：</strong><br>不能插入重复元素<br>最多包含一个null元素</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Set</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">Collection</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="HashSet类"><a href="#HashSet类" class="headerlink" title="HashSet类"></a>HashSet类</h4><p><strong>所有父接口：</strong>Serializable, Cloneable, Iterable<e>, Collection<e>, Set<e></e></e></e></p>
+<p><strong>特点：</strong><br>基于hashMap类实现<br>元素是无序的<br>最多包含一个null元素<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashSet</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AbstractSet</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Set</span>&lt;<span class="title">E</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span>&#123;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="HashSet类内部对hashMap类的操作"><a href="#HashSet类内部对hashMap类的操作" class="headerlink" title="HashSet类内部对hashMap类的操作"></a>HashSet类内部对hashMap类的操作</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object PRESENT = <span class="keyword">new</span> Object();</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">transient</span> HashMap&lt;E,Object&gt; map;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">   	<span class="keyword">return</span> map.put(e, PRESENT)==<span class="keyword">null</span>;</span><br><span class="line">   &#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">remove</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> map.remove(o)==PRESENT;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="TreeSet类"><a href="#TreeSet类" class="headerlink" title="TreeSet类"></a>TreeSet类</h4><p><strong>所有父接口：</strong>Serializable, Cloneable, Iterable<e>, Collection<e>, NavigableSet<e>, Set<e>, SortedSet<e></e></e></e></e></e></p>
+<p><strong>特点：</strong><br>基于NavigableMap类实现<br>二叉树结构<br>元素是有序的<br>不能包含null元素</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TreeSet</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractSet</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">NavigableSet</span>&lt;<span class="title">E</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Map接口"><a href="#Map接口" class="headerlink" title="Map接口"></a>Map接口</h2><p><strong>所有父接口：</strong>无<br><strong>特点：</strong><br>“key-value”储存结构<br>key - 可以为null，但不能重复</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Map</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="HashMap类"><a href="#HashMap类" class="headerlink" title="HashMap类"></a>HashMap类</h3><p><strong>所有父接口：</strong>Serializable, Cloneable, Map&lt;K,V&gt;<br><strong>特点：</strong><br>基于哈希表实现<br>线程不同步</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Map</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;, <span class="title">Cloneable</span>, <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="HashTable类"><a href="#HashTable类" class="headerlink" title="HashTable类"></a>HashTable类</h3><p><strong>所有父接口：</strong>Serializable, Cloneable, Map&lt;K,V&gt;</p>
+<p><strong>官方：</strong>This class implements a hash table, which maps keys to values. Any non-null object can be used as a key or as a value.</p>
+<p><strong>特点：</strong><br>基于哈希表实现<br>线程同步<br>key和value都不能为null</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hashtable</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">Dictionary</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Map</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="TreeMap类"><a href="#TreeMap类" class="headerlink" title="TreeMap类"></a>TreeMap类</h3><p><strong>所有父接口：</strong>Serializable, Cloneable, Map&lt;K,V&gt;, NavigableMap&lt;K,V&gt;, SortedMap&lt;K,V&gt;</p>
+<p><strong>官方：</strong>A Red-Black tree based NavigableMap implementation. The map is sorted according to the natural ordering of its keys, or by a Comparator provided at map creation time, depending on which constructor is used.</p>
+<p><strong>特点：</strong><br>树状结构<br>key 不能为null，value 可以为null</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TreeMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AbstractMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">NavigableMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span>&#123;</span><br></pre></td></tr></table></figure>
+<p><strong>参考链接</strong><br><a href="https://my.oschina.net/u/2331760/blog/406154" target="_blank" rel="noopener">java list用法示例详解</a><br><a href="http://blog.csdn.net/geduo_83/article/details/20613233" target="_blank" rel="noopener">HashSet和TreeSet有和异同</a><br><a href="http://blog.csdn.net/lcore/article/details/8868943" target="_blank" rel="noopener">Thinking in Java之集合框架浅析</a><br><a href="http://blog.csdn.net/lcore/article/details/8869937" target="_blank" rel="noopener">Thinking in Java之深入Collection源码学习</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Java/2018/03/java-object-class.html" rel="next" title="Java Object类详解">
+                <i class="fa fa-chevron-left"></i> Java Object类详解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/uncategorized/2018/03/shiro-simple-studying.html" rel="prev" title="Shiro 简单教程">
+                Shiro 简单教程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="liwenfeng" />
+            
+              <p class="site-author-name" itemprop="name">liwenfeng</p>
+			  <!--liwenfeng:change 2018.03.18 begin-->
+              <p class="site-description motion-element" itemprop="description"></p>
+			  <p class="site-description motion-element" itemprop="description">人若有才，清风自来</p>
+			  <!--liwenfeng:change 2018.03.18 end-->
+			  <p class="site-description motion-element" itemprop="description"></p>
+
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java集合图解"><span class="nav-number">1.</span> <span class="nav-text">Java集合图解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java集合框架的UML类图"><span class="nav-number">1.1.</span> <span class="nav-text">Java集合框架的UML类图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java集合框架-思维导图"><span class="nav-number">1.2.</span> <span class="nav-text">Java集合框架-思维导图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#各集合类型对比"><span class="nav-number">1.3.</span> <span class="nav-text">各集合类型对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Collection接口"><span class="nav-number">2.</span> <span class="nav-text">Collection接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#List接口"><span class="nav-number">2.1.</span> <span class="nav-text">List接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#LinkedList"><span class="nav-number">2.1.1.</span> <span class="nav-text">LinkedList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ArrayList"><span class="nav-number">2.1.2.</span> <span class="nav-text">ArrayList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vector"><span class="nav-number">2.1.3.</span> <span class="nav-text">Vector</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Set接口"><span class="nav-number">2.2.</span> <span class="nav-text">Set接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HashSet类"><span class="nav-number">2.2.1.</span> <span class="nav-text">HashSet类</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#HashSet类内部对hashMap类的操作"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">HashSet类内部对hashMap类的操作</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TreeSet类"><span class="nav-number">2.2.2.</span> <span class="nav-text">TreeSet类</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Map接口"><span class="nav-number">3.</span> <span class="nav-text">Map接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap类"><span class="nav-number">3.1.</span> <span class="nav-text">HashMap类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashTable类"><span class="nav-number">3.2.</span> <span class="nav-text">HashTable类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TreeMap类"><span class="nav-number">3.3.</span> <span class="nav-text">TreeMap类</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" align="center">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">liwenfeng</span>
+
+  
+</div>
+
+
+
+<div align="center">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数：<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+  <div class="powered-by">个人专属</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">博客 &mdash; <a class="theme-link" target="_blank" href="../">leewf</a></div>
+
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

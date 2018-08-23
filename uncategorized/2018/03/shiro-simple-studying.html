@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Shiro,todo," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1Apache Shiro 是 Java 的一个安全框架，可以帮助我们完成：认证、授权、加密、会话管理、与 Web 集成、缓 存等等。 Shiro 图解Shiro基本功能点 Authentication：身份认证/登录，验证用户是不是拥有相应的身份Authorization：授权，验证某个已认证的用户是否拥有某个权限Session Manager：会话管理，即用户登录后就是一次会话，在没有退出之前">
+<meta name="keywords" content="Shiro,todo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shiro 简单教程">
+<meta property="og:url" content="http://www.yoursite.com/uncategorized/2018/03/shiro-simple-studying.html">
+<meta property="og:site_name" content="愤怒的IT青年">
+<meta property="og:description" content="1Apache Shiro 是 Java 的一个安全框架，可以帮助我们完成：认证、授权、加密、会话管理、与 Web 集成、缓 存等等。 Shiro 图解Shiro基本功能点 Authentication：身份认证/登录，验证用户是不是拥有相应的身份Authorization：授权，验证某个已认证的用户是否拥有某个权限Session Manager：会话管理，即用户登录后就是一次会话，在没有退出之前">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://img2.ph.126.net/WTS4yhvmPEklut7esCnK3Q==/6632684047793499152.png">
+<meta property="og:image" content="http://img2.ph.126.net/U4OduhXixc3O2_0u44jbeQ==/90353467544291033.png">
+<meta property="og:image" content="http://img2.ph.126.net/gZcGsisIwgwFo-bKObnhoQ==/140737488455682878.jpg">
+<meta property="og:updated_time" content="2018-04-08T13:06:00.431Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Shiro 简单教程">
+<meta name="twitter:description" content="1Apache Shiro 是 Java 的一个安全框架，可以帮助我们完成：认证、授权、加密、会话管理、与 Web 集成、缓 存等等。 Shiro 图解Shiro基本功能点 Authentication：身份认证/登录，验证用户是不是拥有相应的身份Authorization：授权，验证某个已认证的用户是否拥有某个权限Session Manager：会话管理，即用户登录后就是一次会话，在没有退出之前">
+<meta name="twitter:image" content="http://img2.ph.126.net/WTS4yhvmPEklut7esCnK3Q==/6632684047793499152.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.yoursite.com/uncategorized/2018/03/shiro-simple-studying.html"/>
+
+
+
+
+
+  <title>Shiro 简单教程 | 愤怒的IT青年</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">愤怒的IT青年</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+<div class="custom-site-signature" >将来的你，一定会感谢此刻的自己…… </div>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/uncategorized/2018/03/shiro-simple-studying.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="liwenfeng">
+      <meta itemprop="description" content="将来的你，一定会感谢此刻的自己……">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="愤怒的IT青年">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Shiro 简单教程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-19T21:22:51+08:00">
+                2018-03-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Apache Shiro 是 Java 的一个安全框架，可以帮助我们完成：认证、授权、加密、会话管理、与 Web 集成、缓 存等等。</span><br></pre></td></tr></table></figure>
+<h2 id="Shiro-图解"><a href="#Shiro-图解" class="headerlink" title="Shiro 图解"></a>Shiro 图解</h2><h3 id="Shiro基本功能点"><a href="#Shiro基本功能点" class="headerlink" title="Shiro基本功能点"></a>Shiro基本功能点</h3><p> <img src="http://img2.ph.126.net/WTS4yhvmPEklut7esCnK3Q==/6632684047793499152.png" alt="Shiro基本功能点.png"><br><strong>Authentication：</strong>身份认证/登录，验证用户是不是拥有相应的身份<br><strong>Authorization：</strong>授权，验证某个已认证的用户是否拥有某个权限<br><strong>Session Manager：</strong>会话管理，即用户登录后就是一次会话，在没有退出之前，它的所有信 息都在会话中<br><strong>Cryptography：</strong>加密，保护数据的安全性，如密码加密存储到数据库<br><strong>Caching：</strong>缓存，比如用户登录后，其用户信息、拥有的角色/权限不必每次去查<br><strong>Concurrency：</strong>支持多线程应用的并发验证，即如在一个线程中开启另一个线程，能 把权限自动传播过去<br><strong>Testing：</strong>提供测试支持<br><strong>Run As：</strong>允许一个用户假装为另一个用户(如果他们允许)的身份进行访问<br><strong>Remember Me：</strong>非常常见的功能，即一次登录后，下次再来的话不用登录</p>
+<h3 id="Shiro基本架构"><a href="#Shiro基本架构" class="headerlink" title="Shiro基本架构"></a>Shiro基本架构</h3><p><img src="http://img2.ph.126.net/U4OduhXixc3O2_0u44jbeQ==/90353467544291033.png" alt="Shiro架构.png"></p>
+<p><strong>Subject：</strong>主体，代表了当前“用户”，所有的Subject 都会绑定到SecurityManager，与Subject 的所有交互都会委托给 SecurityManager，SecurityManager 是实际的执行者。<br><strong>SecurityManager：</strong>安全管理器，管理着所有 Subject，可以看出它是 Shiro 的核心，负责与其他组件进行交互。<br><strong>Realm：</strong>域，可以把Realm 看成DataSource，即安全数据源。，Shiro 需要从Realm 获取(如用户、角色、权限)安全数据(Realm需要开发者提供)，</p>
+<h3 id="Shiiro-内部架构图"><a href="#Shiiro-内部架构图" class="headerlink" title="Shiiro 内部架构图"></a>Shiiro 内部架构图</h3><p><img src="http://img2.ph.126.net/gZcGsisIwgwFo-bKObnhoQ==/140737488455682878.jpg" alt="Shiro-内部架构.jpg"></p>
+<p><strong>参考文献</strong></p>
+<p><a href="https://shiro.apache.org/documentation.html" target="_blank" rel="noopener">官方文档</a><br><a href="https://www.jianshu.com/p/5a35d0100a71" target="_blank" rel="noopener">Shiro入门教程</a><br>[跟我学Shiro教程 张开涛著]</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Shiro/" rel="tag"><i class="fa fa-tag"></i> Shiro</a>
+          
+            <a href="/tags/todo/" rel="tag"><i class="fa fa-tag"></i> todo</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Java/2018/03/java-collection-summary.html" rel="next" title="Java 集合知识整合">
+                <i class="fa fa-chevron-left"></i> Java 集合知识整合
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/SpringBoot/2018/03/idea-build-springboot-project.html" rel="prev" title="IDEA搭建SpringBoot+Mybatis项目">
+                IDEA搭建SpringBoot+Mybatis项目 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="liwenfeng" />
+            
+              <p class="site-author-name" itemprop="name">liwenfeng</p>
+			  <!--liwenfeng:change 2018.03.18 begin-->
+              <p class="site-description motion-element" itemprop="description"></p>
+			  <p class="site-description motion-element" itemprop="description">人若有才，清风自来</p>
+			  <!--liwenfeng:change 2018.03.18 end-->
+			  <p class="site-description motion-element" itemprop="description"></p>
+
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Shiro-图解"><span class="nav-number">1.</span> <span class="nav-text">Shiro 图解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Shiro基本功能点"><span class="nav-number">1.1.</span> <span class="nav-text">Shiro基本功能点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Shiro基本架构"><span class="nav-number">1.2.</span> <span class="nav-text">Shiro基本架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Shiiro-内部架构图"><span class="nav-number">1.3.</span> <span class="nav-text">Shiiro 内部架构图</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" align="center">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">liwenfeng</span>
+
+  
+</div>
+
+
+
+<div align="center">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数：<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+  <div class="powered-by">个人专属</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">博客 &mdash; <a class="theme-link" target="_blank" href="../">leewf</a></div>
+
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

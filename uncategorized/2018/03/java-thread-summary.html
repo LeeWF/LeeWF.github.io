@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,Thread," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="线程简介线程：程序执行流的最小单元(进程的一个实体，是CPU调度和分派的基本单位)    Java中的线程：java.lang.Thread类的一个实例 常用方法    方法签名 简介     java.lang.Runnable abstract void run() 线程对象被调度之后所执行的操作   java.lang.Thread Thread() 新建一个线程    Thread(Str">
+<meta name="keywords" content="Java,Thread">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 线程知识整合">
+<meta property="og:url" content="http://www.yoursite.com/uncategorized/2018/03/java-thread-summary.html">
+<meta property="og:site_name" content="愤怒的IT青年">
+<meta property="og:description" content="线程简介线程：程序执行流的最小单元(进程的一个实体，是CPU调度和分派的基本单位)    Java中的线程：java.lang.Thread类的一个实例 常用方法    方法签名 简介     java.lang.Runnable abstract void run() 线程对象被调度之后所执行的操作   java.lang.Thread Thread() 新建一个线程    Thread(Str">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://img2.ph.126.net/Fi-L6WzEkYFuSI-qIltgNw==/166914661289627045.png">
+<meta property="og:updated_time" content="2018-03-30T14:51:42.937Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java 线程知识整合">
+<meta name="twitter:description" content="线程简介线程：程序执行流的最小单元(进程的一个实体，是CPU调度和分派的基本单位)    Java中的线程：java.lang.Thread类的一个实例 常用方法    方法签名 简介     java.lang.Runnable abstract void run() 线程对象被调度之后所执行的操作   java.lang.Thread Thread() 新建一个线程    Thread(Str">
+<meta name="twitter:image" content="http://img2.ph.126.net/Fi-L6WzEkYFuSI-qIltgNw==/166914661289627045.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.yoursite.com/uncategorized/2018/03/java-thread-summary.html"/>
+
+
+
+
+
+  <title>Java 线程知识整合 | 愤怒的IT青年</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">愤怒的IT青年</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+<div class="custom-site-signature" >将来的你，一定会感谢此刻的自己…… </div>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/uncategorized/2018/03/java-thread-summary.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="liwenfeng">
+      <meta itemprop="description" content="将来的你，一定会感谢此刻的自己……">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="愤怒的IT青年">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java 线程知识整合</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-21T23:29:54+08:00">
+                2018-03-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="线程简介"><a href="#线程简介" class="headerlink" title="线程简介"></a>线程简介</h2><p><del>线程：程序执行流的最小单元(进程的一个实体，是CPU调度和分派的基本单位)</del><br>    Java中的线程：java.lang.Thread类的一个实例</p>
+<h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">方法签名</th>
+<th style="text-align:center">简介</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">java.lang.Runnable</td>
+<td style="text-align:center">abstract void run()</td>
+<td style="text-align:center">线程对象被调度之后所执行的操作</td>
+</tr>
+<tr>
+<td style="text-align:center">java.lang.Thread</td>
+<td style="text-align:center">Thread()</td>
+<td style="text-align:center">新建一个线程</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">Thread(String name)</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">Thread(Runnable target)</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">synchronized void start()</td>
+<td style="text-align:center">进入就绪状态</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">native void sleep(long millis)</td>
+<td style="text-align:center">休眠一段时间,不会释放资源</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">static native void yield()</td>
+<td style="text-align:center">与sleep()类似， 且只能让同优先级的线程有执行的机会</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">native boolean isAlive()</td>
+<td style="text-align:center">run()方法结束之前返回true，新建、死亡状态返回false</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">static native Thread currentThread()</td>
+<td style="text-align:center">方法返回当前正在使用CPU资源的线程</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">void interrupt()</td>
+<td style="text-align:center">让休眠的线程发生InterruptedException异常，重新排队等待CPU资源</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">final void join()</td>
+<td style="text-align:center">使main线程进入阻塞状态，等待调用join方法的线程执行</td>
+</tr>
+<tr>
+<td style="text-align:center">java.lang.Object</td>
+<td style="text-align:center">final void wait()</td>
+<td style="text-align:center">等待状态，释放资源</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">final native void notify()</td>
+<td style="text-align:center">从等待池唤醒任意一个线程，进入锁标志等待池</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">final native void notifyAll()</td>
+<td style="text-align:center">唤醒所有等待池线程，进入锁标志等待池</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="线程状态转换"><a href="#线程状态转换" class="headerlink" title="线程状态转换"></a>线程状态转换</h2><p><img src="http://img2.ph.126.net/Fi-L6WzEkYFuSI-qIltgNw==/166914661289627045.png" alt="Java-线程状态.png"> </p>
+<ul>
+<li>1、<strong>新建状态(New)</strong>：新创建了一个线程对象</li>
+<li>2、<strong>就绪状态(Runnable)</strong>：线程对象创建后，其它线程调用了该对象的start()方法<ul>
+<li>该状态的线程位于可执行线程池中，变得可执行，等待获取CPU的使用权</li>
+</ul>
+</li>
+<li>3、<strong>执行状态(Running)</strong>：就绪状态的线程获取了CPU，执行程序代码。</li>
+<li>4、<strong>堵塞状态(Blocked)</strong>：堵塞状态是线程由于某种原因放弃CPU使用权。临时停止执行。直到线程进入就绪状态，才有机会转到执行状态。堵塞的情况分三种<ul>
+<li>4.1、<strong>等待堵塞</strong>：执行的线程执行<strong>wait()方法</strong>，JVM会把该线程放入等待池中<strong>(wait会释放持有的锁)</strong></li>
+<li>4.2、<strong>同步堵塞</strong>：执行的线程在获取对象的同步锁时。若该<strong>同步锁被别的线程占用</strong>。则JVM会把该线程放入锁池中</li>
+<li>4.3、<strong>其它堵塞</strong>：执行的线程执行sleep()或join()方法。或者发出了I/O请求时。JVM会把该线程置为堵塞状态。当sleep()状态超时、join()等待线程终止或者超时、或者I/O处理完毕时。线程又一次转入就绪状态。（注意,sleep是不会释放持有的锁)</li>
+</ul>
+</li>
+<li>5、<strong>死亡状态(Dead)</strong>：线程执行完了或者因异常退出了run()方法，该线程结束生命周期。</li>
+</ul>
+<h2 id="创建线程的几种方式"><a href="#创建线程的几种方式" class="headerlink" title="创建线程的几种方式"></a>创建线程的几种方式</h2><ul>
+<li>继承Thread类</li>
+<li>实现Runnable接口</li>
+<li>使用Executor框架创建线程池</li>
+<li>实现Callable接口</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+          
+            <a href="/tags/Thread/" rel="tag"><i class="fa fa-tag"></i> Thread</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/SpringBoot/2018/03/idea-build-springboot-project.html" rel="next" title="IDEA搭建SpringBoot+Mybatis项目">
+                <i class="fa fa-chevron-left"></i> IDEA搭建SpringBoot+Mybatis项目
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/SpringCould/2018/03/spring-could.html" rel="prev" title="Spring Could 入门">
+                Spring Could 入门 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="liwenfeng" />
+            
+              <p class="site-author-name" itemprop="name">liwenfeng</p>
+			  <!--liwenfeng:change 2018.03.18 begin-->
+              <p class="site-description motion-element" itemprop="description"></p>
+			  <p class="site-description motion-element" itemprop="description">人若有才，清风自来</p>
+			  <!--liwenfeng:change 2018.03.18 end-->
+			  <p class="site-description motion-element" itemprop="description"></p>
+
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#线程简介"><span class="nav-number">1.</span> <span class="nav-text">线程简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常用方法"><span class="nav-number">1.1.</span> <span class="nav-text">常用方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程状态转换"><span class="nav-number">2.</span> <span class="nav-text">线程状态转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建线程的几种方式"><span class="nav-number">3.</span> <span class="nav-text">创建线程的几种方式</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" align="center">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">liwenfeng</span>
+
+  
+</div>
+
+
+
+<div align="center">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数：<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+  <div class="powered-by">个人专属</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">博客 &mdash; <a class="theme-link" target="_blank" href="../">leewf</a></div>
+
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

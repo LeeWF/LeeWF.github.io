@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Object是所有类的父类，任何类都默认继承Object类 九个方法:getClass(),hashCode(),equals(),clone(),toString(),notify(),notifyAll(),wait(),finalize() final方法：getClass(),notify(),notifyAll(),wait() 官方文档 getClass()方法1public fina">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java Object类详解">
+<meta property="og:url" content="http://www.yoursite.com/Java/2018/03/java-object-class.html">
+<meta property="og:site_name" content="愤怒的IT青年">
+<meta property="og:description" content="Object是所有类的父类，任何类都默认继承Object类 九个方法:getClass(),hashCode(),equals(),clone(),toString(),notify(),notifyAll(),wait(),finalize() final方法：getClass(),notify(),notifyAll(),wait() 官方文档 getClass()方法1public fina">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.yoursite.com/Java/2018/03/java-object-class/Java-浅拷贝和深拷贝.jpg">
+<meta property="og:image" content="http://www.yoursite.com/Java/2018/03/java-object-class/Java-copy和浅拷贝.jpg">
+<meta property="og:updated_time" content="2018-03-19T08:31:18.330Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java Object类详解">
+<meta name="twitter:description" content="Object是所有类的父类，任何类都默认继承Object类 九个方法:getClass(),hashCode(),equals(),clone(),toString(),notify(),notifyAll(),wait(),finalize() final方法：getClass(),notify(),notifyAll(),wait() 官方文档 getClass()方法1public fina">
+<meta name="twitter:image" content="http://www.yoursite.com/Java/2018/03/java-object-class/Java-浅拷贝和深拷贝.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.yoursite.com/Java/2018/03/java-object-class.html"/>
+
+
+
+
+
+  <title>Java Object类详解 | 愤怒的IT青年</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">愤怒的IT青年</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+<div class="custom-site-signature" >将来的你，一定会感谢此刻的自己…… </div>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Java/2018/03/java-object-class.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="liwenfeng">
+      <meta itemprop="description" content="将来的你，一定会感谢此刻的自己……">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="愤怒的IT青年">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java Object类详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-18T18:12:33+08:00">
+                2018-03-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <pre><code>Object是所有类的父类，任何类都默认继承Object类
+九个方法:getClass(),hashCode(),equals(),clone(),toString(),notify(),notifyAll(),wait(),finalize()
+final方法：getClass(),notify(),notifyAll(),wait()
+</code></pre><p><a href="https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html" target="_blank" rel="noopener">官方文档</a></p>
+<h2 id="getClass-方法"><a href="#getClass-方法" class="headerlink" title="getClass()方法"></a>getClass()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> Class&lt;?&gt; getClass();</span><br></pre></td></tr></table></figure>
+<p>官方：Returns the runtime class of this Object.<br>返回 正在运行的实例化对象的Class</p>
+<h2 id="hashCode-方法"><a href="#hashCode-方法" class="headerlink" title="hashCode()方法"></a>hashCode()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>官方：Returns a hash code value for the object.<br>返回 该对象的哈希码值</p>
+<h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><p>该方法用于哈希查找，可以减少在查找中使用equals的次数，重写了equals方法一般都要重写hashCode方法</p>
+<p>这个方法在一些具有哈希功能的Collection中用到(例如：hashMap、hashSet)</p>
+<h3 id="hashCode-官方规定"><a href="#hashCode-官方规定" class="headerlink" title="hashCode()官方规定"></a>hashCode()官方规定</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">The general contract of hashCode is:</span><br><span class="line">* Whenever it is invoked on the same object more than once during an execution of a Java application, the hashCode method must consistently return the same integer, provided no information used in equals comparisons on the object is modified. This integer need not remain consistent from one execution of an application to another execution of the same application.</span><br><span class="line">* If two objects are equal according to the equals(Object) method, then calling the hashCode method on each of the two objects must produce the same integer result.</span><br><span class="line">* It is not required that if two objects are unequal according to the equals(java.lang.Object) method, then calling the hashCode method on each of the two objects must produce distinct integer results. However, the programmer should be aware that producing distinct integer results for unequal objects may improve the performance of hash tables.</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hashCode一般的规定：</span><br><span class="line">* 在 Java 应用程序执行期间，在对同一对象多次调用hashCode 方法时，必须一致地返回相同的整数，前提是将对象进行equals 比较时所用的信息没有被修改。从某一应用程序的一次执行到同一应用程序的另一次执行，该整数无需保持一致。 </span><br><span class="line">* 如果根据equals(Object) 方法，两个对象是相等的，那么对这两个对象中的每个对象调用 hashCode 方法都必须生成相同的整数结果。   </span><br><span class="line">* 如果根据equals(java.lang.Object) 方法，两个对象不相等，那么对这两个对象中的任一对象上调用 hashCode 方法不 要求一定生成不同的整数结果。但是，程序员应该意识到，为不相等的对象生成不同整数结果可以提高哈希表的性能。</span><br></pre></td></tr></table></figure>
+<h3 id="hashCode-与equal-的关系"><a href="#hashCode-与equal-的关系" class="headerlink" title="hashCode()与equal()的关系"></a>hashCode()与equal()的关系</h3><p>equal() 返回true，则两个对象的hashCode() 的值必须是一样的<br>equal() 返回false，两个对象的hashCode() 的值可能不一样，但不相等的对象生成不同hashCode 值可以提高哈希表的性能</p>
+<h2 id="equal-方法"><a href="#equal-方法" class="headerlink" title="equal() 方法"></a>equal() 方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">this</span> == obj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>官方：Indicates whether some other object is “equal to” this one.</p>
+<p>Object 中equal() 方法用来判断调用equals() 的对象和obj 所引用的对象是否是同一对象(同一对象：内存中的同一块存储单元)，即便是内容完全相等的两块不同的内存对象，也会返回false</p>
+<p>如果希望不同内存但相同内容的两个对象equals时返回true，则我们需要重写父类的equal方法</p>
+<h2 id="clone-方法"><a href="#clone-方法" class="headerlink" title="clone() 方法"></a>clone() 方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">native</span> Object <span class="title">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException</span>;</span><br></pre></td></tr></table></figure>
+<p>官方：Creates and returns a copy of this object.</p>
+<ul>
+<li><strong>需要实现Cloneable</strong><br>如果此对象的类不能实现接口Cloneable，则会抛出CloneNotSupportedException</li>
+<li><strong>执行的是”浅拷贝”操作</strong><br>该方法将创建该对象类的一个新实例，并用该赋值对象的相应字段的所有内容初始化其字段，这些字段的内容本身并不被克隆。因此，此方法执行此对象的“浅拷贝”，而不是“深拷贝”操作</li>
+</ul>
+<h3 id="浅拷贝-Shallow-Clone-和-深拷贝-Deep-Clone"><a href="#浅拷贝-Shallow-Clone-和-深拷贝-Deep-Clone" class="headerlink" title="浅拷贝(Shallow Clone) 和 深拷贝(Deep Clone)"></a>浅拷贝(Shallow Clone) 和 深拷贝(Deep Clone)</h3><!--![浅拷贝和深拷贝](/Java-Object类详解/Java-浅拷贝和深拷贝.jpg)-->
+<img src="/Java/2018/03/java-object-class/Java-浅拷贝和深拷贝.jpg">
+<p>浅拷贝：只复制一个对象，传递引用，不能复制实例<br>深拷贝：复制一个对象，对对象内部的引用的实例也进行复制</p>
+<h4 id="实现深拷贝-Deep-Clone"><a href="#实现深拷贝-Deep-Clone" class="headerlink" title="实现深拷贝(Deep Clone)"></a>实现深拷贝(Deep Clone)</h4><p>深拷贝几种思路:</p>
+<ul>
+<li>序列化</li>
+<li>内部创建新对象构造</li>
+<li>采用cloneabel接口进行深拷贝</li>
+</ul>
+<h3 id="clone与copy的区别"><a href="#clone与copy的区别" class="headerlink" title="clone与copy的区别"></a>clone与copy的区别</h3><p>假设有一个User对象，简单的copy如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User user = new User(18,&quot;李四&quot;);</span><br><span class="line">User user1 = user;</span><br></pre></td></tr></table></figure></p>
+<!-- ![Java-copy和浅拷贝](/Java-Object类详解/Java-copy和浅拷贝.jpg) -->
+<img src="/Java/2018/03/java-object-class/Java-copy和浅拷贝.jpg">
+<h3 id="clone方法的保护机制"><a href="#clone方法的保护机制" class="headerlink" title="clone方法的保护机制"></a>clone方法的保护机制</h3><p>Object中Clone()是被声明为protected的，例如User类，这样保证只有User类里面才能“克隆”User对象</p>
+<h3 id="clone方法的使用"><a href="#clone方法的使用" class="headerlink" title="clone方法的使用"></a>clone方法的使用</h3><ul>
+<li>注意<ul>
+<li>什么时候使用shallow Clone，什么时候使用deep Clone</li>
+<li>调用Clone()方法的对象所属的类(Class)必须implements Clonable接口</li>
+</ul>
+</li>
+</ul>
+<p>详细可参考：<a href="http://blog.csdn.net/zhangjg_blog/article/details/18369201#0-qzone-1-28144-d020d2d2a4e8d1a374a433f596ad1440" target="_blank" rel="noopener">详解Java中的clone方法 – 原型模式</a></p>
+<h3 id="Throws"><a href="#Throws" class="headerlink" title="Throws"></a>Throws</h3><p><code>CloneNotSupportedException</code> - if the object’s class does not support the <code>Cloneable</code> interface. Subclasses that override the <code>clone</code> method can also throw this exception to indicate that an instance cannot be cloned.</p>
+<h2 id="toString-方法"><a href="#toString-方法" class="headerlink" title="toString()方法"></a>toString()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getClass().getName() + <span class="string">"@"</span> + Integer.toHexString(hashCode());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>官方：Returns a string representation of the object. In general</p>
+<p>Object 类的 toString()方法返回一个字符串，该字符串由<strong>“类名(对象是该类的一个实例)”+“@”+”此对象哈希码的无符号十六进制表示”</strong>组成</p>
+<h2 id="notify-方法"><a href="#notify-方法" class="headerlink" title="notify()方法"></a>notify()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">notify</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>官方：Wakes up a single thread that is waiting on this object’s monitor. If any threads are waiting on this object, one of them is chosen to be awakened. The choice is arbitrary and occurs at the discretion of the implementation.</p>
+<p>唤醒在该对象上等待的某个线程。</p>
+<h3 id="Throws-1"><a href="#Throws-1" class="headerlink" title="Throws"></a>Throws</h3><p><code>IllegalMonitorStateException</code> - if the current thread is not the owner of this object’s monitor.</p>
+<h2 id="notifyAll-方法"><a href="#notifyAll-方法" class="headerlink" title="notifyAll()方法"></a>notifyAll()方法</h2><p>官方：Wakes up all threads that are waiting on this object’s monitor. A thread waits on an object’s monitor by calling one of the wait methods.</p>
+<p>该方法唤醒在该对象上等待的所有线程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">notifyAll</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="Throws-2"><a href="#Throws-2" class="headerlink" title="Throws"></a>Throws</h3><p><code>IllegalMonitorStateException</code> - if the current thread is not the owner of this object’s monitor.</p>
+<h2 id="wait-方法"><a href="#wait-方法" class="headerlink" title="wait()方法"></a>wait()方法</h2><h3 id="wait"><a href="#wait" class="headerlink" title="wait()"></a>wait()</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">wait</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        wait(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>官方：Causes the current thread to wait until another thread invokes the notify() method or the     notifyAll() method for this object.</p>
+<p>等待另一个线程调用该对象的方法或notify()、notifyall()方法</p>
+<h4 id="Throws-3"><a href="#Throws-3" class="headerlink" title="Throws"></a>Throws</h4><p><code>IllegalMonitorStateException</code> - if the current thread is not the owner of the object’s monitor.<br><code>InterruptedException</code> - if any thread interrupted the current thread before or while the current thread was waiting for a notification. The <em>interrupted status</em> of the current thread is cleared when this exception is thrown.</p>
+<h3 id="wait-long-timeout"><a href="#wait-long-timeout" class="headerlink" title="wait(long timeout)"></a>wait(long timeout)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">wait</span><span class="params">(<span class="keyword">long</span> timeout)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br></pre></td></tr></table></figure>
+<p>官方：Causes the current thread to wait until either another thread invokes the notify() method or the notifyAll()  method for this object, or a specified amount of time has elapsed.</p>
+<p>等待另一个线程调用该对象的方法或notify()、notifyall()方法，或超过设置时间</p>
+<h4 id="Throws-4"><a href="#Throws-4" class="headerlink" title="Throws:"></a>Throws:</h4><p><code>IllegalArgumentException</code> - if the value of timeout is negative.<br><code>IllegalMonitorStateException</code> - if the current thread is not the owner of the object’s monitor.<br><code>InterruptedException</code> - if any thread interrupted the current thread before or while the current thread was waiting for a notification. The <em>interrupted status</em> of the current thread is cleared when this exception is thrown.</p>
+<h3 id="wait-long-timeout-int-nanos"><a href="#wait-long-timeout-int-nanos" class="headerlink" title="wait(long timeout, int nanos)"></a>wait(long timeout, int nanos)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">wait</span><span class="params">(<span class="keyword">long</span> timeout, <span class="keyword">int</span> nanos)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (timeout &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"timeout value is negative"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (nanos &lt; <span class="number">0</span> || nanos &gt; <span class="number">999999</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</span><br><span class="line">                                <span class="string">"nanosecond timeout value out of range"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (nanos &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            timeout++;</span><br><span class="line">        &#125;</span><br><span class="line">        wait(timeout);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>官方：Causes the current thread to wait until another thread invokes the notify() method or the notifyAll() method for this object, or some other thread interrupts the current thread, or a certain amount of real time has elapsed.</p>
+<h4 id="Throws-5"><a href="#Throws-5" class="headerlink" title="Throws"></a>Throws</h4><p><code>IllegalArgumentException</code> - if the value of timeout is negative or the value of nanos is not in the range 0-999999.<br><code>IllegalMonitorStateException</code> - if the current thread is not the owner of this object’s monitor.<br><code>InterruptedException</code> - if any thread interrupted the current thread before or while the current thread was waiting for a notification. The <em>interrupted status</em> of the current thread is cleared when this exception is thrown.</p>
+<hr>
+<h2 id="finalize-方法"><a href="#finalize-方法" class="headerlink" title="finalize()方法"></a>finalize()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">finalize</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>官方：Called by the garbage collector on an object when garbage collection determines that there are no more references to the object</p>
+<p>用于释放资源。因为无法确定该方法什么时候被调用，很少使用</p>
+<p>Java允许在类中定义一个名为finalize()的方法。它的工作原理是：一旦垃圾回收器准备好释放对象占用的存储空间，将首先调用其finalize()方法。并且在下一次垃圾回收动作发生时，才会真正回收对象占用的内存。</p>
+<h3 id="关于垃圾回收"><a href="#关于垃圾回收" class="headerlink" title="关于垃圾回收"></a>关于垃圾回收</h3><ul>
+<li>对象可能不被垃圾回收。只要程序没有濒临存储空间用完的那一刻，对象占用的空间就得不到释放。</li>
+<li>垃圾回收并不等于“析构”。</li>
+<li>垃圾回收只与内存有关。使用垃圾回收的唯一原因是为了回收程序不再使用的内存。</li>
+</ul>
+<h3 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h3><p>无论对象是如何创建的，垃圾回收器都会负责释放对象占据的所有内存。这就将对finalize()的需求限制到一种特殊情况，即通过某种创建对象方式以外的方式为对象分配了存储空间。<br>不过这种情况一般发生在使用“本地方法”的情况下，本地方法是一种在Java中调用非Java代码的方式。</p>
+<h3 id="Throws-6"><a href="#Throws-6" class="headerlink" title="Throws"></a>Throws</h3><p><code>Throwable</code> - the <code>Exception</code> raised by this method</p>
+<hr>
+<p><strong>参考文献</strong><br>[1]<a href="https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html</a><br>[2]<a href="https://www.cnblogs.com/zhangyinhua/p/7715486.html#_label3" target="_blank" rel="noopener">https://www.cnblogs.com/zhangyinhua/p/7715486.html#_label3</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Redis/2018/03/cjl6dv1mn000zgcq67ric9g5c.html" rel="next" title="Windows Redis服务">
+                <i class="fa fa-chevron-left"></i> Windows Redis服务
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Java/2018/03/java-collection-summary.html" rel="prev" title="Java 集合知识整合">
+                Java 集合知识整合 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="liwenfeng" />
+            
+              <p class="site-author-name" itemprop="name">liwenfeng</p>
+			  <!--liwenfeng:change 2018.03.18 begin-->
+              <p class="site-description motion-element" itemprop="description"></p>
+			  <p class="site-description motion-element" itemprop="description">人若有才，清风自来</p>
+			  <!--liwenfeng:change 2018.03.18 end-->
+			  <p class="site-description motion-element" itemprop="description"></p>
+
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#getClass-方法"><span class="nav-number">1.</span> <span class="nav-text">getClass()方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hashCode-方法"><span class="nav-number">2.</span> <span class="nav-text">hashCode()方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#作用"><span class="nav-number">2.1.</span> <span class="nav-text">作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hashCode-官方规定"><span class="nav-number">2.2.</span> <span class="nav-text">hashCode()官方规定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hashCode-与equal-的关系"><span class="nav-number">2.3.</span> <span class="nav-text">hashCode()与equal()的关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#equal-方法"><span class="nav-number">3.</span> <span class="nav-text">equal() 方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#clone-方法"><span class="nav-number">4.</span> <span class="nav-text">clone() 方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#浅拷贝-Shallow-Clone-和-深拷贝-Deep-Clone"><span class="nav-number">4.1.</span> <span class="nav-text">浅拷贝(Shallow Clone) 和 深拷贝(Deep Clone)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实现深拷贝-Deep-Clone"><span class="nav-number">4.1.1.</span> <span class="nav-text">实现深拷贝(Deep Clone)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clone与copy的区别"><span class="nav-number">4.2.</span> <span class="nav-text">clone与copy的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clone方法的保护机制"><span class="nav-number">4.3.</span> <span class="nav-text">clone方法的保护机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clone方法的使用"><span class="nav-number">4.4.</span> <span class="nav-text">clone方法的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Throws"><span class="nav-number">4.5.</span> <span class="nav-text">Throws</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#toString-方法"><span class="nav-number">5.</span> <span class="nav-text">toString()方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#notify-方法"><span class="nav-number">6.</span> <span class="nav-text">notify()方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Throws-1"><span class="nav-number">6.1.</span> <span class="nav-text">Throws</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#notifyAll-方法"><span class="nav-number">7.</span> <span class="nav-text">notifyAll()方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Throws-2"><span class="nav-number">7.1.</span> <span class="nav-text">Throws</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wait-方法"><span class="nav-number">8.</span> <span class="nav-text">wait()方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#wait"><span class="nav-number">8.1.</span> <span class="nav-text">wait()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Throws-3"><span class="nav-number">8.1.1.</span> <span class="nav-text">Throws</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wait-long-timeout"><span class="nav-number">8.2.</span> <span class="nav-text">wait(long timeout)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Throws-4"><span class="nav-number">8.2.1.</span> <span class="nav-text">Throws:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wait-long-timeout-int-nanos"><span class="nav-number">8.3.</span> <span class="nav-text">wait(long timeout, int nanos)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Throws-5"><span class="nav-number">8.3.1.</span> <span class="nav-text">Throws</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#finalize-方法"><span class="nav-number">9.</span> <span class="nav-text">finalize()方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于垃圾回收"><span class="nav-number">9.1.</span> <span class="nav-text">关于垃圾回收</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用途"><span class="nav-number">9.2.</span> <span class="nav-text">用途</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Throws-6"><span class="nav-number">9.3.</span> <span class="nav-text">Throws</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" align="center">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">liwenfeng</span>
+
+  
+</div>
+
+
+
+<div align="center">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数：<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+  <div class="powered-by">个人专属</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">博客 &mdash; <a class="theme-link" target="_blank" href="../">leewf</a></div>
+
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
