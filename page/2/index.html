@@ -252,6 +252,464 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Programming-Thinking/2018/03/Resource-Based-Access-Control.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="liwenfeng">
+      <meta itemprop="description" content="将来的你，一定会感谢此刻的自己……">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="愤怒的IT青年">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/Programming-Thinking/2018/03/Resource-Based-Access-Control.html" itemprop="url">编程思想：角色权限管理策略(RBAC 新解)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-17T22:11:31+08:00">
+                2018-03-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Programming-Thinking/" itemprop="url" rel="index">
+                    <span itemprop="name">Programming Thinking</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <pre><code>本文讨论以角色概念进行的权限管理策略及主要以基于角色的机制进行权限管理是远远不够的。
+同时讨论一种我认为更好的权限管理方式
+</code></pre><h2 id="什么是角色"><a href="#什么是角色" class="headerlink" title="什么是角色"></a>什么是角色</h2><pre><code>角色：一系列可执行的操作或责任的实体(用于限定你在软件系统中能做什么、不能做什么。用户帐号往往与角色相关联)
+</code></pre><p>例如，一个用户以关联了”项目管理员”角色的帐号登录系统，那这个用户就可以做项目管理员能做的所有事情</p>
+<p>从这个意义上来说，角色更多的是一种行为的概念：它表示用户能在系统中进行的操作</p>
+<h2 id="基于角色的访问控制（Role-Based-Access-Control）"><a href="#基于角色的访问控制（Role-Based-Access-Control）" class="headerlink" title="基于角色的访问控制（Role-Based Access Control）"></a>基于角色的访问控制（Role-Based Access Control）</h2><pre><code>基于角色的访问控制(Role-Based Access Control)：在软件开发中使用角色来控制对软件功能和数据的访问，简称RBAC
+</code></pre><p>有两种正使用的RBAC控制方式：<code>隐式(模糊)的方式</code>和<code>显示(明确)的方式</code></p>
+<h3 id="隐式的访问控制"><a href="#隐式的访问控制" class="headerlink" title="隐式的访问控制"></a>隐式的访问控制</h3><pre><code>不能明确的知道一个角色到底关联了哪些可执行操作，直接通过角色来验证用户有没有操作权限
+</code></pre><p>例如：“项目管理员”角色能查看项目报表<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 通过验证用户角色来判断操作权限</span></span><br><span class="line"><span class="keyword">if</span> (user.hasRole(<span class="string">"Project Manager"</span>) ) &#123;</span><br><span class="line">    <span class="comment">//show project reports</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//don't show project reports</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面代码通过判断用户是否有”项目管理员”角色来决定是否显示查看项目报表，并没有明确语句来定义”项目管理员”这一角色到底包含哪些可执行的行为</p>
+<h4 id="脆弱的权限策略"><a href="#脆弱的权限策略" class="headerlink" title="脆弱的权限策略"></a>脆弱的权限策略</h4><pre><code>上面这种权限访问控制是非常脆弱的，一个极小的权限方面的需求变动都可能导致上面的代码需要重新修改
+</code></pre><p>假如：需要新增“部门管理员”角色，也能查看项目报表<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">if</span> (user.hasRole(<span class="string">"Project Manager"</span>) || user.hasRole(<span class="string">"Department Manager"</span>) ) &#123;</span><br><span class="line">    <span class="comment">//show project reports</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//don't show project reports</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>任何微小的权限需求的变动都可能需要修改软件功能和数据访问的代码</p>
+<h3 id="显示的访问控制-更好的选择"><a href="#显示的访问控制-更好的选择" class="headerlink" title="显示的访问控制(更好的选择)"></a>显示的访问控制(更好的选择)</h3><pre><code>明确定义一个角色能对哪些资源进行什么操作
+</code></pre><p>例如：如果当前用户允许查看编号为12345的项目报表，则显示项目报表按钮(不要太在意冒号分隔的语法，这仅是一个例子)<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//通过验证操作权限判断角色能否操作</span></span><br><span class="line"><span class="keyword">if</span> (user.isPermitted(<span class="string">"projectReport:view:12345"</span>)) &#123;</span><br><span class="line">    <span class="comment">//show the project report button</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//don't show the button</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="显式的权限控制方式的好处"><a href="#显式的权限控制方式的好处" class="headerlink" title="显式的权限控制方式的好处"></a>显式的权限控制方式的好处</h4><ul>
+<li>更少的代码重构<ul>
+<li>系统的功能需求一旦确定下来后，一段时间内对它的改动相应还是比较少的。</li>
+<li>显式的权限控制方式不会因不同的角色要对功能进行操作而修改功能代码</li>
+</ul>
+</li>
+<li>更直观<ul>
+<li>保护资源对象、控制对资源对象的操作。</li>
+<li>这样的权限控制方式更符合人们的思想习惯。</li>
+</ul>
+</li>
+<li>更有弹性<ul>
+<li>可支持任何安全模型的设计</li>
+<li>例如：将操作(权限)直接分配给角色，或者将多个角色关联到组(group)上</li>
+</ul>
+</li>
+<li>外部安全策略管理<ul>
+<li>资源/行为与用户、组、角色的关联可以通过外部的模块或专用工具或管理控制台来完成</li>
+</ul>
+</li>
+<li>可在运行环境做修改<ul>
+<li>因为基于资源的权限控制代码并不依赖于行为的主体(如组、角色、用户等)（没有将行为的主体的字符名词写在代码中），所以你甚至可以在程序运行的时候通过修改主体能对资源进行的操作，通过配置的方式就可应对权限方面需求的变动，不需要重构代码</li>
+</ul>
+</li>
+</ul>
+<h2 id="RBAC新解：Resource-Based-Access-Control"><a href="#RBAC新解：Resource-Based-Access-Control" class="headerlink" title="RBAC新解：Resource-Based Access Control"></a>RBAC新解：Resource-Based Access Control</h2><pre><code>这种显式的机制带给我们的富有弹性的权限模型。在这种新的模型下，已不必再局限于角色了，
+你可以将权限直接分配给用户、组或其它对象
+</code></pre><p>因为显式地、基于资源的权限访问控制的诸多好处，或许可以给RBAC一个新的定义：“Resource-Based Access Control”。</p>
+<h3 id="基于资源的权限访问控制举例：-Apache-Shiro"><a href="#基于资源的权限访问控制举例：-Apache-Shiro" class="headerlink" title="基于资源的权限访问控制举例： Apache Shiro"></a>基于资源的权限访问控制举例： Apache Shiro</h3><pre><code>Apache Shiro：一个java平台的现代权限管理框架，Shiro很好地支持基于资源的权限访问控制。
+</code></pre><p><a href="http://globeeip.iteye.com/blog/1236167" target="_blank" rel="noopener">原文链接</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Interview/2018/03/cjm092z75001gi8q6gcxy1505.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="liwenfeng">
+      <meta itemprop="description" content="将来的你，一定会感谢此刻的自己……">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="愤怒的IT青年">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/Interview/2018/03/cjm092z75001gi8q6gcxy1505.html" itemprop="url">面试--java后端 2018.03.15</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-16T16:56:34+08:00">
+                2018-03-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Interview/" itemprop="url" rel="index">
+                    <span itemprop="name">Interview</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h2><h3 id="Java-基础"><a href="#Java-基础" class="headerlink" title="Java 基础"></a>Java 基础</h3><h4 id="Java-中基础类型"><a href="#Java-中基础类型" class="headerlink" title="Java 中基础类型"></a>Java 中基础类型</h4><pre><code>Java中8大基础类型：byte、shot、int、long、float、double、char、boolean
+
+重点:String是引用类型
+</code></pre><h4 id="Java-中基础类型的包装类什么，它们之间有什么区别"><a href="#Java-中基础类型的包装类什么，它们之间有什么区别" class="headerlink" title="Java 中基础类型的包装类什么，它们之间有什么区别"></a>Java 中基础类型的包装类什么，它们之间有什么区别</h4><table>
+<thead>
+<tr>
+<th style="text-align:center">基础类型</th>
+<th style="text-align:center">包装类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">byte</td>
+<td style="text-align:center">Byte</td>
+</tr>
+<tr>
+<td style="text-align:center">shot</td>
+<td style="text-align:center">Short</td>
+</tr>
+<tr>
+<td style="text-align:center">int</td>
+<td style="text-align:center">Integer</td>
+</tr>
+<tr>
+<td style="text-align:center">long</td>
+<td style="text-align:center">Long</td>
+</tr>
+<tr>
+<td style="text-align:center">float</td>
+<td style="text-align:center">Float</td>
+</tr>
+<tr>
+<td style="text-align:center">double</td>
+<td style="text-align:center">Double</td>
+</tr>
+<tr>
+<td style="text-align:center">char</td>
+<td style="text-align:center">Character</td>
+</tr>
+<tr>
+<td style="text-align:center">boolean</td>
+<td style="text-align:center">Boolean</td>
+</tr>
+</tbody>
+</table>
+<p>基础类型的包装类的区别:</p>
+<ul>
+<li>包装类型是对象，基本类型不是</li>
+<li>传递类型： 包装类型型是引用传递，基本类型是值传递</li>
+<li>声明方式：包装类型需要new在堆内存中进行new来分配内存空间 ，数据类型不需要new关键字</li>
+<li>存储位置：包装类型是把对象放在堆中，基本数据类型直接将值保存在值栈中</li>
+<li>值：包装类型值可以为null，基础类型不能为null</li>
+<li>初始值：包装类型的初始值为null，基础类型各类型初始值不同</li>
+</ul>
+<h4 id="Object类中有哪些方法"><a href="#Object类中有哪些方法" class="headerlink" title="Object类中有哪些方法"></a>Object类中有哪些方法</h4><pre><code>Object类中的方法：getClass()、hashCode()、equals(Object obj)、clone()、toString()、notify()、notifyAll()、wait()、finalize()……
+</code></pre><h4 id="为什么要重写equal-和-hashCode-方法"><a href="#为什么要重写equal-和-hashCode-方法" class="headerlink" title="为什么要重写equal() 和 hashCode() 方法"></a>为什么要重写equal() 和 hashCode() 方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//在Object类中:</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span></span>; </span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">	    <span class="keyword">return</span> (<span class="keyword">this</span> == obj);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><strong>Object 类中的equal() 方法和hashCode() 方法</strong><br> equal() 方法：判断的是两个对象的内存地址<br> hashCode() 方法：返回的是对象的内存地址</p>
+</li>
+<li><p><strong>equal() 和hashCode() 的关系</strong><br> equal() 返回true，则两个对象的hashCode() 的值必须是一样的<br> <del><em>JDK原文：如果根据 equals(Object) 方法，两个对象是相等的，那么对这两个对象中的每个对象调用 hashCode 方法都必须生成相同的整数结果</em></del><br> equal() 返回false，两个对象的hashCode() 的值不一定不一样，但不相等的对象生成不同hashCode() 值可以提高哈希表的性能<br> <del><em>JDK原文：如果根据 equals(java.lang.Object) 方法，两个对象不相等，那么对这两个对象中的任一对象上调用 hashCode 方法不 要求一定生成不同的整数结果。但是，程序员应该意识到，为不相等的对象生成不同整数结果可以提高哈希表的性能</em></del></p>
+</li>
+<li><p><strong>为什么要重写equal() 方法</strong><br> Object类中equals()判断的是两个对象的内存地址<br> 有时我们希望两个对象只要是某些属性相同就认为他们的quals() 为true，此时就应该修改equal() 方法</p>
+</li>
+<li><p><strong>为什么要重写hashCode() 方法 </strong><br> 如果重写equal() 方法，两个对象属性相等且返回true，此时两个对象的内存地址不同，如果不重写hashcode()，hashCode 必然不相等<br> 由于equal() 方法返回true，hashCode() 的值必须是一样的，所以有必要重写hashCode() 方法</p>
+</li>
+<li><p><strong>不重写hashCode() 方法可能产生的后果</strong></p>
+<p> 只重写equal() 方法，不重写hashCode() 方法，在HashSet中添加两个equals() 为true的对象时，可能会将两个对象都加入进去</p>
+</li>
+</ul>
+<p><a href="http://blog.csdn.net/u013679744/article/details/57074669" target="_blank" rel="noopener">参考链接</a></p>
+<h4 id="集合中HashSet-和HashMap-有什么区别"><a href="#集合中HashSet-和HashMap-有什么区别" class="headerlink" title="集合中HashSet 和HashMap 有什么区别"></a>集合中HashSet 和HashMap 有什么区别</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//HashSet类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashSet</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AbstractSet</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Set</span>&lt;<span class="title">E</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HashSet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//HashMap类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Map</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt;, <span class="title">Cloneable</span>, <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">HashMap</th>
+<th style="text-align:center">HashSet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">实现了Map接口</td>
+<td style="text-align:center">实现Set接口</td>
+</tr>
+<tr>
+<td style="text-align:center">存储键值对</td>
+<td style="text-align:center">仅存储对象</td>
+</tr>
+<tr>
+<td style="text-align:center">调用put() 向map中添加元素</td>
+<td style="text-align:center">调用add() 方法向Set中添加元素</td>
+</tr>
+<tr>
+<td style="text-align:center">HashMap使用键(Key)计算Hashcode</td>
+<td style="text-align:center">HashSet 使用成员对象来计算hashcode 值，对于两个对象来说hashcode 可能相同，所以equals() 方法用来判断对象的相等性，如果两个对象不同的话，那么返回false</td>
+</tr>
+<tr>
+<td style="text-align:center">HashMap 相对于HashSet 较快，因为它是使用唯一的键获取对象</td>
+<td style="text-align:center">HashSet 较HashMap 来说比较慢</td>
+</tr>
+</tbody>
+</table>
+<p><a href="http://www.importnew.com/6931.html" target="_blank" rel="noopener">参考链接</a></p>
+<h4 id="原始的JDBC连接数据库有哪几个步骤"><a href="#原始的JDBC连接数据库有哪几个步骤" class="headerlink" title="原始的JDBC连接数据库有哪几个步骤"></a>原始的JDBC连接数据库有哪几个步骤</h4><ul>
+<li><p>七个步骤：</p>
+<ul>
+<li><p>加载数据库驱动</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1、加载数据库驱动（ 成功加载后，会将Driver类的实例注册到DriverManager类中）</span></span><br><span class="line">Class.forName(<span class="string">"com.mysql.jdbc.Driver"</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取数据库连接</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 2、获取数据库连接</span></span><br><span class="line">conn = DriverManager.getConnection(<span class="string">"jdbc:mysql://127.0.0.1:3306/jdbctest"</span>, username, password);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取数据库操作对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 3、获取数据库操作对象</span></span><br><span class="line">stmt = conn.createStatement();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义操作的SQL语句</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 4、定义操作的SQL语句  </span></span><br><span class="line">String sql = <span class="string">"select * from user"</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行数据库操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 5、执行数据库操作  </span></span><br><span class="line">ResultSet rs = stmt.executeQuery(sql);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>处理结果集</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 6、获取并操作结果集  </span></span><br><span class="line"><span class="keyword">while</span> (rs.next()) &#123;  </span><br><span class="line">    System.out.println(rs.getInt(<span class="string">"id"</span>));  </span><br><span class="line">    System.out.println(rs.getString(<span class="string">"name"</span>));  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>关闭对象，回收数据库资源(关闭结果集–&gt;关闭数据库操作对象–&gt;关闭连接)</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 6、关闭对象</span></span><br><span class="line"><span class="comment">//关闭结果集对象  </span></span><br><span class="line">rs.close();</span><br><span class="line"><span class="comment">//关闭数据库操作对象  </span></span><br><span class="line">stmt.close();</span><br><span class="line"><span class="comment">//关闭数据库连接对象 </span></span><br><span class="line">conn.close();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="后端框架"><a href="#后端框架" class="headerlink" title="后端框架"></a>后端框架</h3><h4 id="Hibernate-有哪几种状态"><a href="#Hibernate-有哪几种状态" class="headerlink" title="Hibernate 有哪几种状态"></a>Hibernate 有哪几种状态</h4><p>​        临时状态、持久化状态、游离态</p>
+<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><h4 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h4><h5 id="索引一般建在哪"><a href="#索引一般建在哪" class="headerlink" title="索引一般建在哪"></a>索引一般建在哪</h5><h3 id="Html"><a href="#Html" class="headerlink" title="Html"></a>Html</h3><h4 id="lt-div-gt-是什么元素"><a href="#lt-div-gt-是什么元素" class="headerlink" title="&lt;div&gt;是什么元素"></a><code>&lt;div&gt;</code>是什么元素</h4><h4 id="让两个-lt-div-gt-并行有哪几种方法"><a href="#让两个-lt-div-gt-并行有哪几种方法" class="headerlink" title="让两个&lt;div&gt;并行有哪几种方法"></a>让两个<code>&lt;div&gt;</code>并行有哪几种方法</h4><h3 id="javascript"><a href="#javascript" class="headerlink" title="javascript"></a>javascript</h3><h4 id="javascript-和Jquery有什么区别"><a href="#javascript-和Jquery有什么区别" class="headerlink" title="javascript 和Jquery有什么区别"></a>javascript 和Jquery有什么区别</h4><h3 id="C语言"><a href="#C语言" class="headerlink" title="C语言"></a>C语言</h3><h4 id="指针是什么"><a href="#指针是什么" class="headerlink" title="指针是什么"></a>指针是什么</h4>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Hexo/2018/03/hexo-next-custom-setting.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -418,7 +876,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Android/2018/03/cjl6f9v640000soq6rzsph5r8.html">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Android/2018/03/cjm092z6e0000i8q62lr2ij4s.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="liwenfeng">
@@ -437,7 +895,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/Android/2018/03/cjl6f9v640000soq6rzsph5r8.html" itemprop="url">Android Intent的查找与匹配-PackageManagerService</a></h1>
+                <a class="post-title-link" href="/Android/2018/03/cjm092z6e0000i8q62lr2ij4s.html" itemprop="url">Android Intent的查找与匹配-PackageManagerService</a></h1>
         
 
         <div class="post-meta">
@@ -580,7 +1038,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Android/2018/03/cjl6f9v6d0007soq6wd3fnrm7.html">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Android/2018/03/cjm092z6n0007i8q6t966h5wv.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="liwenfeng">
@@ -599,7 +1057,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/Android/2018/03/cjl6f9v6d0007soq6wd3fnrm7.html" itemprop="url">Android源码设计模式 学习笔记（四） 原型模式</a></h1>
+                <a class="post-title-link" href="/Android/2018/03/cjm092z6n0007i8q6t966h5wv.html" itemprop="url">Android源码设计模式 学习笔记（四） 原型模式</a></h1>
         
 
         <div class="post-meta">
@@ -750,7 +1208,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Android/2018/03/cjl6f9v680002soq6mh9z01iz.html">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Android/2018/03/cjm092z6m0006i8q6dwh23sm6.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="liwenfeng">
@@ -769,7 +1227,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/Android/2018/03/cjl6f9v680002soq6mh9z01iz.html" itemprop="url">Android源码设计模式 学习笔记（三） Builder模式</a></h1>
+                <a class="post-title-link" href="/Android/2018/03/cjm092z6m0006i8q6dwh23sm6.html" itemprop="url">Android源码设计模式 学习笔记（三） Builder模式</a></h1>
         
 
         <div class="post-meta">
@@ -989,7 +1447,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Android/2018/03/cjl6f9v6e0008soq6v7u2b8iz.html">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Android/2018/03/cjm092z6r000ci8q6hvwljy1p.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="liwenfeng">
@@ -1008,7 +1466,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/Android/2018/03/cjl6f9v6e0008soq6v7u2b8iz.html" itemprop="url">Android源码设计模式 学习笔记（二） 单例模式</a></h1>
+                <a class="post-title-link" href="/Android/2018/03/cjm092z6r000ci8q6hvwljy1p.html" itemprop="url">Android源码设计模式 学习笔记（二） 单例模式</a></h1>
         
 
         <div class="post-meta">
@@ -1233,7 +1691,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Android/2018/03/cjl6f9v6c0006soq670zai40h.html">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Android/2018/03/cjm092z6i0002i8q6pigy46i9.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="liwenfeng">
@@ -1252,7 +1710,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/Android/2018/03/cjl6f9v6c0006soq670zai40h.html" itemprop="url">Android源码设计模式 学习笔记（一） 面向对象六大原则</a></h1>
+                <a class="post-title-link" href="/Android/2018/03/cjm092z6i0002i8q6pigy46i9.html" itemprop="url">Android源码设计模式 学习笔记（一） 面向对象六大原则</a></h1>
         
 
         <div class="post-meta">
@@ -1429,7 +1887,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Hexo/2018/03/cjl6f9v6v0015soq6wpvwr010.html">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Hexo/2018/03/cjm092z740019i8q6rs0lo5ok.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="liwenfeng">
@@ -1448,7 +1906,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/Hexo/2018/03/cjl6f9v6v0015soq6wpvwr010.html" itemprop="url">Hello Hexo</a></h1>
+                <a class="post-title-link" href="/Hexo/2018/03/cjm092z740019i8q6rs0lo5ok.html" itemprop="url">Hello Hexo</a></h1>
         
 
         <div class="post-meta">
@@ -1645,7 +2103,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1656,7 +2114,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1667,7 +2125,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

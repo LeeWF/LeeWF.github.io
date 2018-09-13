@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="创建和销毁对象第1条 考虑静态工厂方法替代构造器使用静态工厂方法代替构造方法 特点 优势 静态工厂方法有名称(提高代码可读性) 可以不必每次调用时都新建一个新的对象(提高性能)[类似单例模式、享元模式] 例：Boolean.value(boolean)   可以返回原返回类型的任何子类型对象 服务提供者框架(Service Provider Framework)   创建参数化类型实例时，使代码更">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EffectiveJava 第二章 创建和销毁对象 笔记">
+<meta property="og:url" content="http://www.yoursite.com/Java/2018/08/cjm092z6u000ji8q6bilaedg5.html">
+<meta property="og:site_name" content="愤怒的IT青年">
+<meta property="og:description" content="创建和销毁对象第1条 考虑静态工厂方法替代构造器使用静态工厂方法代替构造方法 特点 优势 静态工厂方法有名称(提高代码可读性) 可以不必每次调用时都新建一个新的对象(提高性能)[类似单例模式、享元模式] 例：Boolean.value(boolean)   可以返回原返回类型的任何子类型对象 服务提供者框架(Service Provider Framework)   创建参数化类型实例时，使代码更">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-13T07:25:59.536Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EffectiveJava 第二章 创建和销毁对象 笔记">
+<meta name="twitter:description" content="创建和销毁对象第1条 考虑静态工厂方法替代构造器使用静态工厂方法代替构造方法 特点 优势 静态工厂方法有名称(提高代码可读性) 可以不必每次调用时都新建一个新的对象(提高性能)[类似单例模式、享元模式] 例：Boolean.value(boolean)   可以返回原返回类型的任何子类型对象 服务提供者框架(Service Provider Framework)   创建参数化类型实例时，使代码更">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.yoursite.com/Java/2018/08/cjm092z6u000ji8q6bilaedg5.html"/>
+
+
+
+
+
+  <title>EffectiveJava 第二章 创建和销毁对象 笔记 | 愤怒的IT青年</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">愤怒的IT青年</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+<div class="custom-site-signature" >将来的你，一定会感谢此刻的自己…… </div>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.yoursite.com/Java/2018/08/cjm092z6u000ji8q6bilaedg5.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="liwenfeng">
+      <meta itemprop="description" content="将来的你，一定会感谢此刻的自己……">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="愤怒的IT青年">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">EffectiveJava 第二章 创建和销毁对象 笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-28T16:22:05+08:00">
+                2018-08-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="创建和销毁对象"><a href="#创建和销毁对象" class="headerlink" title="创建和销毁对象"></a>创建和销毁对象</h2><h3 id="第1条-考虑静态工厂方法替代构造器"><a href="#第1条-考虑静态工厂方法替代构造器" class="headerlink" title="第1条 考虑静态工厂方法替代构造器"></a>第1条 <strong>考虑静态工厂方法替代构造器</strong></h3><p><code>使用静态工厂方法代替构造方法</code></p>
+<h4 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h4><ul>
+<li>优势<ul>
+<li>静态工厂方法有名称(提高代码可读性)</li>
+<li>可以不必每次调用时都新建一个新的对象(提高性能)[类似单例模式、享元模式]<ul>
+<li>例：Boolean.value(boolean)</li>
+</ul>
+</li>
+<li>可以返回原返回类型的任何子类型对象<ul>
+<li>服务提供者框架(Service Provider Framework)</li>
+</ul>
+</li>
+<li>创建参数化类型实例时，使代码更加简洁(见例1-1)</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>缺点<ul>
+<li>类如果不含有共有或受保护的构造器，就不能被子例化(p.8，待理解)</li>
+<li>静态工厂方法和普通静态方法实际上没有任何区别<ul>
+<li>在API文档中难以区分。解决方法：遵循标准命名习惯</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="详例"><a href="#详例" class="headerlink" title="详例"></a>详例</h4><p><code>例1-1</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用构造器</span></span><br><span class="line">Map&lt;String,List&lt;String&gt;&gt; m = <span class="keyword">new</span> HashMap&lt;String,List&lt;String&gt;&gt;();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//使用静态工厂</span></span><br><span class="line">Map&lt;String,List&lt;String&gt;&gt; m = HashMap.newInstance();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;K,V&gt; <span class="function">HashMap&lt;K,V&gt; <span class="title">newInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> HashMap&lt;K,V&gt;();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="第2条-遇到多个构造器参数时考虑使用构建器"><a href="#第2条-遇到多个构造器参数时考虑使用构建器" class="headerlink" title="第2条 遇到多个构造器参数时考虑使用构建器"></a>第2条 <strong>遇到多个构造器参数时考虑使用构建器</strong></h3><h4 id="解决多构造器参数的三种方式"><a href="#解决多构造器参数的三种方式" class="headerlink" title="解决多构造器参数的三种方式"></a>解决多构造器参数的三种方式</h4><h5 id="重叠构造器模式-telescoping-construtor"><a href="#重叠构造器模式-telescoping-construtor" class="headerlink" title="重叠构造器模式(telescoping construtor)"></a>重叠构造器模式(telescoping construtor)</h5><p>创建实例时选择所需要的构造器，没必要的参数设置为默认值。<br>少参数时适用，多参数时会失去控制<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;            <span class="comment">//required</span></span><br><span class="line">    <span class="keyword">private</span> String name;        <span class="comment">//optional</span></span><br><span class="line">    <span class="keyword">private</span> String phone;       <span class="comment">//optional</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(Long id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(id,<span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(Long id, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(id,name,<span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(Long id, String name, String phone)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.phone = phone;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="JavaBeans模式"><a href="#JavaBeans模式" class="headerlink" title="JavaBeans模式"></a>JavaBeans模式</h5><p>调用无参构造器创建对象，然后通过setter方法设置必要的参数</p>
+<ul>
+<li>缺点<ul>
+<li>构造过程被分为了多次调用，构造过程中JavaBean可能处于不一致状态</li>
+<li>JavaBeans模式阻止了把类做成不可变的可能(生成实例后仍可通过setter方法改变实例)</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class User&#123;</span><br><span class="line">    private Long id;            //required</span><br><span class="line">    private String name;        //optional</span><br><span class="line">    private String phone;       //optional</span><br><span class="line"></span><br><span class="line">    public User() &#123; &#125;</span><br><span class="line"></span><br><span class="line">    public void setId(Long id) &#123; this.id = id; &#125;</span><br><span class="line">    public void setName(String name) &#123; this.name = name; &#125;</span><br><span class="line">    public void setPhone(String phone) &#123; this.phone = phone; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Builder模式-构建器"><a href="#Builder模式-构建器" class="headerlink" title="Builder模式(构建器)"></a>Builder模式(构建器)</h5><p>构造器私有化，定义静态内部类作为构建器，构建器setter方法返回其本身</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建实例方法如下</span></span><br><span class="line">User user=<span class="keyword">new</span> User.Builder(<span class="number">001</span>).name(<span class="string">"张三"</span>).phone(<span class="string">"10086"</span>).build();</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;            <span class="comment">//required</span></span><br><span class="line">    <span class="keyword">private</span> String name;        <span class="comment">//optional</span></span><br><span class="line">    <span class="keyword">private</span> String phone;       <span class="comment">//optional</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> id;            <span class="comment">//required</span></span><br><span class="line">        <span class="keyword">private</span> String name;        <span class="comment">//optional</span></span><br><span class="line">        <span class="keyword">private</span> String phone;       <span class="comment">//optional</span></span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Builder</span><span class="params">(<span class="keyword">long</span> id)</span> </span>&#123; <span class="keyword">this</span>.id = id; &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">name</span><span class="params">(String name)</span> </span>&#123; <span class="keyword">this</span>.name = name;        <span class="keyword">return</span> <span class="keyword">this</span>; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">phone</span><span class="params">(String phone)</span> </span>&#123; <span class="keyword">this</span>.phone = phone;    <span class="keyword">return</span> <span class="keyword">this</span>; &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> User <span class="title">build</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> User(<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(Builder builder)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = builder.id;</span><br><span class="line">        <span class="keyword">this</span>.name = builder.name;</span><br><span class="line">        <span class="keyword">this</span>.phone = builder.phone;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="第3条-使用私有构造器或者枚举类型强化Singleton属性"><a href="#第3条-使用私有构造器或者枚举类型强化Singleton属性" class="headerlink" title="第3条 使用私有构造器或者枚举类型强化Singleton属性"></a>第3条 使用私有构造器或者枚举类型强化Singleton属性</h3><p><code>私有构造器实现Singleton</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">File</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> File INSTANCE =<span class="keyword">new</span> File();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">File</span><span class="params">()</span> </span>&#123; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> File <span class="title">getInstance</span><span class="params">()</span></span>&#123; <span class="keyword">return</span> INSTANCE; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//防止反序列化时产生新的实例</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Object <span class="title">readResolve</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>枚举实现Singleton(最佳方法)</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span>  File &#123;</span><br><span class="line">    INSTANCE;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">openFile</span><span class="params">()</span></span>&#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="第4条-通过私有构造器强化不可实例化的能力"><a href="#第4条-通过私有构造器强化不可实例化的能力" class="headerlink" title="第4条 通过私有构造器强化不可实例化的能力"></a>第4条 通过私有构造器强化不可实例化的能力</h3><p><code>有些类不希望被实例化(例如工具类)，为了避免误导用户，可以通过构造器私有来实现它不能被实例化</code><br><code>缺点：构造器私有后该类不能被子类化</code></p>
+<h3 id="第5条-避免创建不必要对象"><a href="#第5条-避免创建不必要对象" class="headerlink" title="第5条 避免创建不必要对象"></a>第5条 避免创建不必要对象</h3><pre><code>不要误解为创建对象的代价非常昂贵，事实上小对象的创建和回收是非常廉价的、
+我们应该尽可能地避免创建对象
+</code></pre><ul>
+<li>同时提供了静态工厂方法和构造器的不变类，通常使用静态工厂方法，避免创建不必要对象，例如<code>Boolean.valueOf(String)</code>优先于<code>Boolean(String)</code></li>
+<li>调用非常频繁的方法，方法内对象实例化可以放到全局中或者使用static块,防止每次调用方法都重复创建对象</li>
+<li>当心无意识装箱，计算时优先使用基本类型</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//会构造大约2^31个多余的Long实例</span></span><br><span class="line">Long sum =<span class="number">0L</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">long</span> i=<span class="number">0</span>;i&lt;Integer.MAX_VALUE;i++)&#123;</span><br><span class="line">     sum +=i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="第6条-消除过期的对象引用"><a href="#第6条-消除过期的对象引用" class="headerlink" title="第6条 消除过期的对象引用"></a>第6条 消除过期的对象引用</h3><ul>
+<li>当一个对象的引用被无意识的保留时，垃圾回收机制不会处理这个对象，从而造成内存泄漏（见例6-1）<br><code>例6-1</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Stack</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Object[] elements;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_INITIAL_CAPACITY = <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Stack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        elements = <span class="keyword">new</span> Object[DEFAULT_INITIAL_CAPACITY];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">push</span><span class="params">(Object e)</span> </span>&#123;</span><br><span class="line">        ensureCapacity();</span><br><span class="line">        elements[size++] = e;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">pop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (size == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> EmptyStackException();</span><br><span class="line">        <span class="keyword">return</span> elements[--size];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacity</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (elements.length == size) &#123;</span><br><span class="line">            elements = Arrays.copyOf(elements, <span class="number">2</span> * size + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//如果一个栈先增长，再收缩，则从栈中弹出的对象不会被当做垃圾回收</span></span><br><span class="line"><span class="comment">//因为即使程序不再引用对象，栈内部仍维护着这些对象的过期引用</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 修正版：清空过期对象的引用</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">pop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (size == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> EmptyStackException();</span><br><span class="line">        Object result = elements[--size];</span><br><span class="line">        elements[size] = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="第7条-避免使用终结方法"><a href="#第7条-避免使用终结方法" class="headerlink" title="第7条 避免使用终结方法"></a>第7条 <strong>避免使用终结方法</strong></h3><pre><code>终结方法(finalizer)通常是不可预测的，使用终结方法会导致行为不稳定、降低性能。
+Java语言规范不仅不能保证终结方法会被及时执行，而且根本就不能保证它们会被执行
+</code></pre><p>####　<strong>终结方法缺点</strong></p>
+<ul>
+<li>终结方法的缺点在于不能保证会被及时地执行 </li>
+<li>finalizer方法的线程优先级比当前程序的其他线程优先级要低，且JAVA语言规范不保证哪个线程可以执行finalizer方法<ul>
+<li>如果程序依赖于终结方法被执行的时间点，那么该程序在不同JVM中运行的表现可能截然不同</li>
+<li>使用终结方法会造成非常严重的性能损失</li>
+</ul>
+</li>
+</ul>
+<p>####　<strong>提供显示的终止方法</strong></p>
+<pre><code>如果类的对象中封装的资源确实需要终止，不编写终止方法的有效方法--提供显示的终止方法，并要求该类的客户端在每个实例不再使用的情况下调用该方法。
+举例：InputStream、OutputStream、java.sql.Connection、java.util.Timer
+</code></pre><ul>
+<li>显示终止方法的要求<ul>
+<li>1.实例必须记录下自己是否已经被终止了</li>
+<li>2.显示终止方法必须在一个私有域中记录下“该对象已经不再有效”</li>
+<li>3.在执行终止方法之后，执行对象其他方法时要检查“该对象已经不再有效”私有域，抛出IllegalStateException。</li>
+</ul>
+</li>
+</ul>
+<p>显示终止方法的使用方法：通常和try-finally一起使用，以确保及时终止 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FileInputStream fileInputStream = <span class="keyword">new</span> FileInputStream();</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="comment">//Do something about fileInputStream;</span></span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">    fileInputStream.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="终结方法的合理用途"><a href="#终结方法的合理用途" class="headerlink" title="终结方法的合理用途"></a>终结方法的合理用途</h4><p>1.作为安全网——显示终止方法忘记调用的时候</p>
+<p>2.终止非关键的本地资源（android JNI操作中）</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Docker/2018/08/cjm092z6t000ei8q61li0qecj.html" rel="next" title="Docker 安装和操作笔记">
+                <i class="fa fa-chevron-left"></i> Docker 安装和操作笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Linux/2018/09/cjm092z6o0008i8q6asylwkgp.html" rel="prev" title="Certbot免费https证书">
+                Certbot免费https证书 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="liwenfeng" />
+            
+              <p class="site-author-name" itemprop="name">liwenfeng</p>
+			  <!--liwenfeng:change 2018.03.18 begin-->
+              <p class="site-description motion-element" itemprop="description"></p>
+			  <p class="site-description motion-element" itemprop="description">人若有才，清风自来</p>
+			  <!--liwenfeng:change 2018.03.18 end-->
+			  <p class="site-description motion-element" itemprop="description"></p>
+
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建和销毁对象"><span class="nav-number">1.</span> <span class="nav-text">创建和销毁对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第1条-考虑静态工厂方法替代构造器"><span class="nav-number">1.1.</span> <span class="nav-text">第1条 考虑静态工厂方法替代构造器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#特点"><span class="nav-number">1.1.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#详例"><span class="nav-number">1.1.2.</span> <span class="nav-text">详例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第2条-遇到多个构造器参数时考虑使用构建器"><span class="nav-number">1.2.</span> <span class="nav-text">第2条 遇到多个构造器参数时考虑使用构建器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解决多构造器参数的三种方式"><span class="nav-number">1.2.1.</span> <span class="nav-text">解决多构造器参数的三种方式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#重叠构造器模式-telescoping-construtor"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">重叠构造器模式(telescoping construtor)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#JavaBeans模式"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">JavaBeans模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Builder模式-构建器"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">Builder模式(构建器)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第3条-使用私有构造器或者枚举类型强化Singleton属性"><span class="nav-number">1.3.</span> <span class="nav-text">第3条 使用私有构造器或者枚举类型强化Singleton属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第4条-通过私有构造器强化不可实例化的能力"><span class="nav-number">1.4.</span> <span class="nav-text">第4条 通过私有构造器强化不可实例化的能力</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第5条-避免创建不必要对象"><span class="nav-number">1.5.</span> <span class="nav-text">第5条 避免创建不必要对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第6条-消除过期的对象引用"><span class="nav-number">1.6.</span> <span class="nav-text">第6条 消除过期的对象引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第7条-避免使用终结方法"><span class="nav-number">1.7.</span> <span class="nav-text">第7条 避免使用终结方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#终结方法的合理用途"><span class="nav-number">1.7.1.</span> <span class="nav-text">终结方法的合理用途</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" align="center">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">liwenfeng</span>
+
+  
+</div>
+
+
+
+<div align="center">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数：<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+  <div class="powered-by">个人专属</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">博客 &mdash; <a class="theme-link" target="_blank" href="../">leewf</a></div>
+
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
